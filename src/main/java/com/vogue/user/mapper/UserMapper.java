@@ -8,6 +8,7 @@ public interface UserMapper {
 
   int duplicateEmail(SignUpVO signUp);
   int duplicateUser(SignUpVO signUp);
+  int signUpUser(SignUpVO signUp);
 
 
 }

@@ -14,4 +14,20 @@
             AND tel = #{tel}
     </select>
 
+    <insert id="signUpUser" parameterType="com.vogue.user.domain.SignUpVO">
+        insert into tb_user (
+            email,
+            password,
+            name,
+            nickname,
+            tel
+        ) values (
+            #{email},
+            #{password},
+            #{name},
+            #{nickname},
+            #{tel}
+        );
+    </insert>
+
 </mapper>
