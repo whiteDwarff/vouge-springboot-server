@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vogue.user.mapper.UserMapper">
+
+    <select id="duplicateEmail" parameterType="com.vogue.user.domain.SignUpVO" resultType="int">
+        SELECT COUNT(*) FROM tb_user WHERE email = #{email}
+    </select>
+
+    <select id="duplicateUser" parameterType="com.vogue.user.domain.SignUpVO" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM tb_user
+        WHERE name = #{name}
+            AND tel = #{tel}
+    </select>
+
+</mapper>
