@@ -16,5 +16,6 @@ public class SignUpVO {
   private String name;
   private String tel;
   private String password;
+  private String token;
 
 }

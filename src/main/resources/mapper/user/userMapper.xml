@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.vogue.user.mapper.UserMapper">
 
+    <!-- 회원가입 로직 -->
     <select id="duplicateEmail" parameterType="com.vogue.user.domain.SignUpVO" resultType="int">
         SELECT COUNT(*) FROM tb_user WHERE email = #{email}
     </select>
@@ -23,11 +24,28 @@
             tel
         ) values (
             #{email},
-            #{password},
+            crypt(#{password}, gen_salt('md5')),
             #{name},
             #{nickname},
             #{tel}
         );
     </insert>
 
+
+    <!--
+
+
+    // DB INSERT
+    INSERT INTO db_table(id, password) VALUES('entered id', crypt('entered password', gen_salt('md5')));
+
+    // DB UPDATE
+    UPDATE ... SET pswhash = crypt('new password', gen_salt('md5'));
+
+    // 비밀번호 검증
+    SELECT id
+    FROM db_table
+    WHERE password = crypt('entered password', password);
+
+
+    -->
 </mapper>
