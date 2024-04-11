@@ -1,13 +1,12 @@
 package com.vogue.user;
 
 
-import com.vogue.service.CaptchaService;
-import com.vogue.service.UserService;
+import com.vogue.common.CmmnResponse;
+import com.vogue.user.domain.SignInVO;
+import com.vogue.user.service.UserService;
 import com.vogue.user.domain.SignUpVO;
-import com.vogue.user.domain.UserStatus;
-import com.vogue.user.mapper.UserMapper;
+import com.vogue.code.UserStatus;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,18 +17,23 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
   private final UserService userService;
-  private final CaptchaService captchaService;
 
-  public UserController(UserService userService, CaptchaService captchaService){
+  public UserController(UserService userService){
     this.userService = userService;
-    this.captchaService = captchaService;
   }
 
-  @GetMapping("signIn")
-  public  ResponseEntity<?> signIn(@RequestParam String token) {
-    log.info("GET : signIn" + token);
+  @PostMapping("signIn")
+  public  ResponseEntity<?> signIn(@RequestBody SignInVO signIn) {
+    log.info("POST : signIn" + signIn.toString());
+    log.info(signIn.getEmail());
+    log.info(signIn.getPassword());
+    log.info(signIn.getToken());
 
-    return ResponseEntity.ok(captchaService.verifyToken(token));
+    CmmnResponse response = userService.signInUser(signIn);
+    HttpStatus httpStatus = response.getList().containsKey("user") ?
+            UserStatus.OK.getCode() : UserStatus.UNAUTHORIZED.getCode();
+
+    return ResponseEntity.status(httpStatus).body(response);
   }
 
   /*
@@ -41,21 +45,12 @@ public class UserController {
   public ResponseEntity<?> signUp(@RequestBody SignUpVO vo) {
     log.info("POST : signUp" + vo.toString());
 
-    // 이름과 휴대폰 번호로 가입된 정보가 있는 경우
-    if(userService.signUpUser(vo) == 0)
-      return ResponseEntity
-              .status(UserStatus.CONFLICT_USER.getCode())
-              .body(UserStatus.CONFLICT_USER.getMessage());
-    // Google ReCaptcha의 score가 0.5 이하
-    if(!captchaService.verifyToken(vo.getToken()))
-      return ResponseEntity
-              .status(UserStatus.UNAUTHORIZED_TOKEN.getCode())
-              .body(UserStatus.UNAUTHORIZED_TOKEN.getMessage());
+    CmmnResponse response = userService.signUpUser(vo);
+    HttpStatus httpStatus = UserStatus.getStatusByMessage((String) response.get("message"));
 
-    return ResponseEntity
-            .status(UserStatus.CREATED.getCode())
-            .body(UserStatus.CREATED.getMessage());
+    return ResponseEntity.status(httpStatus).body(response);
   }
+
   /*
   * 이메일 중복검사
   * @params : SignUpVo
@@ -65,15 +60,15 @@ public class UserController {
   public ResponseEntity<?> hasEmail(@RequestBody SignUpVO vo) {
     log.info("POST : hasEmail =>"  + vo.toString());
 
-    // 해당 이메일로 가입된 정보가 있는 경우
-//    if(userService.duplicateEmail(vo))
-//      return ResponseEntity
-//              .status(UserStatus.CONFLICT_EMAIL.getCode())
-//              .body(UserStatus.CONFLICT_EMAIL.getMessage());
-//
-//    return ResponseEntity
-//            .ok()
-//            .body(UserStatus.HAS_EMAIL_SUCCESS.getMessage());
+    CmmnResponse response = userService.duplicateEmail(vo);
+    int result = (int) response.get("result");
+
+    HttpStatus httpStatus;
+
+    httpStatus = result > 0 ?
+            UserStatus.CONFLICT_EMAIL.getCode() : UserStatus.HAS_EMAIL_SUCCESS.getCode();
+
+    return ResponseEntity.status(httpStatus).body(response);
   }
 
 }

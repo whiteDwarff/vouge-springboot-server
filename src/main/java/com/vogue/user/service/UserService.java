@@ -1,15 +1,16 @@
-package com.vogue.service;
+package com.vogue.user.service;
 
 
 import com.vogue.common.CmmnResponse;
+import com.vogue.user.domain.SignInVO;
 import com.vogue.user.domain.SignUpVO;
 
 public interface UserService {
 
   CmmnResponse duplicateEmail(SignUpVO signUp);
 
-  boolean duplicateUser(SignUpVO signUp);
+  CmmnResponse signUpUser(SignUpVO signUp);
 
-  int signUpUser(SignUpVO signUp);
+  CmmnResponse signInUser(SignInVO signIn);
 
 }

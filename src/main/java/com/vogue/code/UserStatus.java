@@ -1,4 +1,4 @@
-package com.vogue.user.domain;
+package com.vogue.code;
 
 import lombok.*;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,11 @@ public enum UserStatus {
 
   CONFLICT_USER(HttpStatus.CONFLICT, "가입된 회원정보가 존재합니다."),
 
-  UNAUTHORIZED_TOKEN(HttpStatus.UNAUTHORIZED, "Google Captcha 검증에 실패했습니다. 다시 시도해주세요.");
+  UNAUTHORIZED_TOKEN(HttpStatus.UNAUTHORIZED, "Google Captcha 검증에 실패했습니다. 다시 시도해주세요."),
+
+  OK(HttpStatus.OK, "로그인에 성공하였습니다."),
+
+  UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "가입된 정보가 존재하지 않습니다.");
 
 
   private final HttpStatus code;
@@ -26,11 +30,18 @@ public enum UserStatus {
     this.message = message;
   }
 
-  public HttpStatus getCode() {
-    return code;
+  /*
+  * @params : token
+  * @Return : HttpStatus
+  * message의 값을 비교하여 code 반환
+  * */
+  public static HttpStatus getStatusByMessage(String message) {
+    for (UserStatus code : values()) {
+      if (code.getMessage().equals(message)) {
+        return code.getCode();
+      }
+    }
+    return HttpStatus.INTERNAL_SERVER_ERROR;
   }
 
-  public String getMessage() {
-    return message;
-  }
 }

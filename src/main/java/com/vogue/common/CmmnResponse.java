@@ -20,5 +20,7 @@ public class CmmnResponse {
   public void put(String key, Object value) {
     list.put(key, value);
   }
-
+  public Object get(String key) {
+    return list.get(key);
+  }
 }

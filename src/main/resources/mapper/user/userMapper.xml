@@ -31,6 +31,14 @@
         );
     </insert>
 
+    <!-- 로그인 로직 -->
+    <select id="signInUser" parameterType="com.vogue.user.domain.SignInVO" resultType="com.vogue.user.domain.UserVO">
+        SELECT *
+        FROM tb_user
+        WHERE email = #{email}
+            AND password = crypt(#{password}, password);
+    </select>
+
 
     <!--
 
