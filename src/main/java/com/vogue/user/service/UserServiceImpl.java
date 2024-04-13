@@ -33,17 +33,25 @@ public class UserServiceImpl implements UserService{
 
     CmmnResponse response = new CmmnResponse();
 
-    UserVO user = mapper.signInUser(signIn);
-    String message = UserStatus.UNAUTHORIZED.getMessage();
+    int result = mapper.findByEmail(signIn);
+    String message = UserStatus.UNAUTHORIZED_EMAIL.getMessage();
 
-    Boolean captcha = captchaService.verifyToken(signIn.getToken());
+    // 가입한 이메일이 있는 경우
+    if(result > 0) {
+      UserVO user = mapper.signInUser(signIn);
+      Boolean captcha = captchaService.verifyToken(signIn.getToken());
 
-    if(!captcha)
-      message = UserStatus.UNAUTHORIZED_TOKEN.getMessage();
-
-    if(Objects.nonNull(user)) {
-      message = UserStatus.OK.getMessage();
-      response.put("user", user);
+      // 아이디와 비밀번호가 모두 일치한 경우
+      if (Objects.nonNull(user)) {
+          message = UserStatus.OK.getMessage();
+          response.put("user", user);
+      }
+      // 비밀번호가 일치하지 않은 경우
+      else
+        message = UserStatus.UNAUTHORIZED_PWD.getMessage();
+      // google ReCaptcha 검증에 실패한 경우
+      if (!captcha)
+        message = UserStatus.UNAUTHORIZED_TOKEN.getMessage();
     }
     response.setMessage(message);
 
@@ -86,6 +94,19 @@ public class UserServiceImpl implements UserService{
       mapper.signUpUser(signUp);
 
     response.setMessage(message);
+
+    return response;
+  }
+
+  @Override
+  public CmmnResponse findByEmail(SignUpVO signUp) {
+
+    CmmnResponse response = new CmmnResponse();
+
+    String email = mapper.getEmail(signUp);
+
+    if(Objects.isNull(email)) response.setMessage(UserStatus.UNAUTHORIZED_EMAIL.getMessage());
+    else response.put("email", email);
 
     return response;
   }

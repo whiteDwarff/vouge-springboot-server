@@ -13,4 +13,6 @@ public interface UserService {
 
   CmmnResponse signInUser(SignInVO signIn);
 
+  CmmnResponse findByEmail(SignUpVO signUp);
+
 }

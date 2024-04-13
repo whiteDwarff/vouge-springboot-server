@@ -55,8 +55,7 @@ public class CaptchaService {
 
     log.info(token);
     log.info(response.getBody());
-    return true;
 //    log.info(" #### score : " + String.valueOf(jsonObject.get("score")));
-//    return Double.parseDouble(String.valueOf(jsonObject.get("score"))) >= 0.5;
+    return Double.parseDouble(String.valueOf(jsonObject.get("score"))) >= 0.5;
     }
 }

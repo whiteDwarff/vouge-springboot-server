@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum UserStatus {
 
+  // 회원가입 status
   CREATED(HttpStatus.CREATED, "회원가입이 완료되었습니다. 로그인 후 이용해주세요."),
 
   HAS_EMAIL_SUCCESS(HttpStatus.OK, "사용할 수 있는 이메일입니다. 현재 이메일을 사용하시겠습니까?"),
@@ -17,9 +18,12 @@ public enum UserStatus {
 
   UNAUTHORIZED_TOKEN(HttpStatus.UNAUTHORIZED, "Google Captcha 검증에 실패했습니다. 다시 시도해주세요."),
 
+  // 로그인 status
   OK(HttpStatus.OK, "로그인에 성공하였습니다."),
 
-  UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "가입된 정보가 존재하지 않습니다.");
+  UNAUTHORIZED_EMAIL(HttpStatus.UNAUTHORIZED, "가입된 정보가 존재하지 않습니다."),
+
+  UNAUTHORIZED_PWD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
 
 
   private final HttpStatus code;

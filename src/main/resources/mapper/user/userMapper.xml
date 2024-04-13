@@ -24,7 +24,8 @@
             tel
         ) values (
             #{email},
-            crypt(#{password}, gen_salt('md5')),
+          <!--  crypt(#{password}, gen_salt('md5')),-->
+            #{password},
             #{name},
             #{nickname},
             #{tel}
@@ -32,14 +33,27 @@
     </insert>
 
     <!-- 로그인 로직 -->
-    <select id="signInUser" parameterType="com.vogue.user.domain.SignInVO" resultType="com.vogue.user.domain.UserVO">
-        SELECT *
+    <select id="findByEmail" parameterType="com.vogue.user.domain.SignInVO" resultType="int">
+        SELECT COUNT(*)
         FROM tb_user
         WHERE email = #{email}
-            AND password = crypt(#{password}, password);
     </select>
 
+    <select id="signInUser" parameterType="com.vogue.user.domain.SignInVO" resultType="com.vogue.user.domain.UserVO">
+        SELECT
+            *
+        FROM tb_user
+        WHERE email = #{email}
+            AND password = #{password}
+<!--        crypt(#{password}, password);-->
+    </select>
 
+    <select id="getEmail" parameterType="com.vogue.user.domain.SignUpVO" resultType="String">
+        SELECT email
+        FROM tb_user
+        WHERE name = #{name}
+            AND tel = #{tel}
+    </select>
     <!--
 
 

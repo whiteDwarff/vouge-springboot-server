@@ -21,17 +21,18 @@ public class UserController {
   public UserController(UserService userService){
     this.userService = userService;
   }
-
+  /*
+   * 로그인
+   * @params : SignInVO
+   * @return : ResponseEntity
+   * */
   @PostMapping("signIn")
-  public  ResponseEntity<?> signIn(@RequestBody SignInVO signIn) {
-    log.info("POST : signIn" + signIn.toString());
-    log.info(signIn.getEmail());
-    log.info(signIn.getPassword());
-    log.info(signIn.getToken());
+  public ResponseEntity<?> signIn(@RequestBody SignInVO vo) {
+    log.info("POST : signIn" + vo.toString());
 
-    CmmnResponse response = userService.signInUser(signIn);
-    HttpStatus httpStatus = response.getList().containsKey("user") ?
-            UserStatus.OK.getCode() : UserStatus.UNAUTHORIZED.getCode();
+    CmmnResponse response = userService.signInUser(vo);
+    log.info("message : " +  (String) response.getMessage());
+    HttpStatus httpStatus = UserStatus.getStatusByMessage((String) response.getMessage());
 
     return ResponseEntity.status(httpStatus).body(response);
   }
@@ -45,8 +46,9 @@ public class UserController {
   public ResponseEntity<?> signUp(@RequestBody SignUpVO vo) {
     log.info("POST : signUp" + vo.toString());
 
+
     CmmnResponse response = userService.signUpUser(vo);
-    HttpStatus httpStatus = UserStatus.getStatusByMessage((String) response.get("message"));
+    HttpStatus httpStatus = UserStatus.getStatusByMessage((String) response.getMessage());
 
     return ResponseEntity.status(httpStatus).body(response);
   }
@@ -69,6 +71,22 @@ public class UserController {
             UserStatus.CONFLICT_EMAIL.getCode() : UserStatus.HAS_EMAIL_SUCCESS.getCode();
 
     return ResponseEntity.status(httpStatus).body(response);
+  }
+  /*
+   * 이메일 찾기
+   * @params : SignUpVo
+   * @return : ResponseEntity
+   * */
+  @PostMapping("email")
+  public ResponseEntity<?> findByEmail(@RequestBody SignUpVO vo) {
+    log.info("POST : findByEmail =>"  + vo.toString());
+
+    CmmnResponse response = userService.findByEmail(vo);
+
+    HttpStatus status = response.getList().containsKey("email") ?
+            UserStatus.OK.getCode() : UserStatus.UNAUTHORIZED_EMAIL.getCode();
+
+    return ResponseEntity.status(status).body(response);
   }
 
 }
