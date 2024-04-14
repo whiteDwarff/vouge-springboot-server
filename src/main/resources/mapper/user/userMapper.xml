@@ -48,6 +48,7 @@
 <!--        crypt(#{password}, password);-->
     </select>
 
+    <!-- 이메일 찾기 -->
     <select id="getEmail" parameterType="com.vogue.user.domain.SignUpVO" resultType="String">
         SELECT email
         FROM tb_user

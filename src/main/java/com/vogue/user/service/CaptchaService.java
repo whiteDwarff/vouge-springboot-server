@@ -4,7 +4,6 @@ package com.vogue.user.service;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -49,13 +48,11 @@ public class CaptchaService {
     // 요청에 대한 응답 정의
     HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
     // Request 요청
-    ResponseEntity<String> response = restTemplate.postForEntity( url, request , String.class );
+    ResponseEntity<String> response = restTemplate.postForEntity(url, request , String.class);
 
     JsonObject jsonObject = JsonParser.parseString(response.getBody()).getAsJsonObject();
 
-    log.info(token);
     log.info(response.getBody());
-//    log.info(" #### score : " + String.valueOf(jsonObject.get("score")));
     return Double.parseDouble(String.valueOf(jsonObject.get("score"))) >= 0.5;
     }
 }
