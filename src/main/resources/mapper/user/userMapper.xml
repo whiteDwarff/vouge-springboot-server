@@ -24,7 +24,6 @@
             tel
         ) values (
             #{email},
-          <!--  crypt(#{password}, gen_salt('md5')),-->
             #{password},
             #{name},
             #{nickname},
@@ -45,7 +44,6 @@
         FROM tb_user
         WHERE email = #{email}
             AND password = #{password}
-<!--        crypt(#{password}, password);-->
     </select>
 
     <!-- 이메일 찾기 -->
@@ -55,6 +53,22 @@
         WHERE name = #{name}
             AND tel = #{tel}
     </select>
+
+    <!-- 비밀번호 찾기01 회원여부 확인 -->
+    <select id="getEmailCount" parameterType="com.vogue.user.domain.EmailVO" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_user
+        WHERE email = #{email}
+            AND name = #{name}
+            AND tel = #{tel}
+    </select>
+
+    <!-- 비밀번호 찾기02 임시 비밀번호 발급  -->
+    <update id="issuanceTmpryPwd" parameterType="com.vogue.user.domain.EmailVO">
+        UPDATE tb_user
+        SET password = #{password}
+        WHERE email = #{email}
+    </update>
     <!--
 
 

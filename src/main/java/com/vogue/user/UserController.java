@@ -2,6 +2,7 @@ package com.vogue.user;
 
 
 import com.vogue.common.CmmnResponse;
+import com.vogue.user.domain.EmailVO;
 import com.vogue.user.domain.SignInVO;
 import com.vogue.user.service.UserService;
 import com.vogue.user.domain.SignUpVO;
@@ -79,12 +80,30 @@ public class UserController {
    * */
   @PostMapping("email")
   public ResponseEntity<?> findByEmail(@RequestBody SignUpVO vo) {
-    log.info("POST : findByEmail =>"  + vo.toString());
+    log.info("POST : email =>"  + vo.toString());
 
     CmmnResponse response = userService.findByEmail(vo);
 
     HttpStatus status = response.getList().containsKey("email") ?
-            UserStatus.OK.getCode() : UserStatus.UNAUTHORIZED_EMAIL.getCode();
+            UserStatus.LOGIN_OK.getCode() : UserStatus.UNAUTHORIZED_EMAIL.getCode();
+
+    return ResponseEntity.status(status).body(response);
+  }
+
+  /*
+   * 비밀번호 찾기
+   * @params : EmailVO
+   * @return : ResponseEntity
+   * */
+  @PostMapping("password")
+  public ResponseEntity<?> findByPassword(@RequestBody EmailVO vo) {
+    log.info("POST : password =>"  + vo.toString());
+
+    CmmnResponse response = userService.findByPassword(vo);
+
+    int result = (int) response.get("result");
+    HttpStatus status = result > 0 ?
+            UserStatus.TEMPORARY_PWD.getCode() : UserStatus.UNAUTHORIZED_EMAIL.getCode();
 
     return ResponseEntity.status(status).body(response);
   }

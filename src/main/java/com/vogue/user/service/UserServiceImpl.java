@@ -1,6 +1,7 @@
 package com.vogue.user.service;
 
 import com.vogue.common.CmmnResponse;
+import com.vogue.user.domain.EmailVO;
 import com.vogue.user.domain.SignInVO;
 import com.vogue.user.domain.SignUpVO;
 import com.vogue.code.UserStatus;
@@ -21,11 +22,14 @@ public class UserServiceImpl implements UserService{
   private final UserMapper mapper;
   private final CaptchaService captchaService;
 
+  private final MailService mailService;
+
 
   @Autowired
-  public UserServiceImpl(UserMapper mapper, CaptchaService captchaService) {
+  public UserServiceImpl(UserMapper mapper, CaptchaService captchaService, MailService mailService) {
     this.mapper = mapper;
     this.captchaService = captchaService;
+    this.mailService = mailService;
   }
 
   @Override
@@ -43,7 +47,7 @@ public class UserServiceImpl implements UserService{
 
       // 아이디와 비밀번호가 모두 일치한 경우
       if (Objects.nonNull(user)) {
-          message = UserStatus.OK.getMessage();
+          message = UserStatus.LOGIN_OK.getMessage();
           response.put("user", user);
       }
       // 비밀번호가 일치하지 않은 경우
@@ -108,6 +112,27 @@ public class UserServiceImpl implements UserService{
     if(Objects.isNull(email)) response.setMessage(UserStatus.UNAUTHORIZED_EMAIL.getMessage());
     else response.put("email", email);
 
+    return response;
+  }
+
+  @Override
+  public CmmnResponse findByPassword(EmailVO vo) {
+
+    CmmnResponse response = new CmmnResponse();
+
+    int result = mapper.getEmailCount(vo);
+    String message = UserStatus.UNAUTHORIZED_EMAIL.getMessage();
+
+    if(result > 0) {
+      // 임시 비밀번호 발급
+       vo.setPassword(mailService.temporaryPassword());
+      // 사용자의 비밀번호를 임시 비밀번호로 변경
+      mapper.issuanceTmpryPwd(vo);
+      mailService.sendMail(vo);
+      message = UserStatus.TEMPORARY_PWD.getMessage();
+    }
+    response.setMessage(message);
+    response.put("result", result);
     return response;
   }
 
