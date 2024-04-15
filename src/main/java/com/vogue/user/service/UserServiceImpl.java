@@ -124,11 +124,10 @@ public class UserServiceImpl implements UserService{
     String message = UserStatus.UNAUTHORIZED_EMAIL.getMessage();
 
     if(result > 0) {
-      // 임시 비밀번호 발급
-       vo.setPassword(mailService.temporaryPassword());
+      // 사용자의 이메일로 메일 발송
+      mailService.sendMail(vo);
       // 사용자의 비밀번호를 임시 비밀번호로 변경
       mapper.issuanceTmpryPwd(vo);
-      mailService.sendMail(vo);
       message = UserStatus.TEMPORARY_PWD.getMessage();
     }
     response.setMessage(message);

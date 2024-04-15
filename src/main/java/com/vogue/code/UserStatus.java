@@ -19,12 +19,14 @@ public enum UserStatus {
   UNAUTHORIZED_TOKEN(HttpStatus.UNAUTHORIZED, "Google Captcha 검증에 실패했습니다. 다시 시도해주세요."),
 
   // 로그인 status
-  OK(HttpStatus.OK, "로그인에 성공하였습니다."),
+  LOGIN_OK(HttpStatus.OK, "로그인에 성공하였습니다."),
 
   UNAUTHORIZED_EMAIL(HttpStatus.UNAUTHORIZED, "가입된 정보가 존재하지 않습니다."),
 
-  UNAUTHORIZED_PWD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
+  UNAUTHORIZED_PWD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
 
+  // 비밀번호 찾기
+  TEMPORARY_PWD(HttpStatus.OK, "가입하신 메일로 임시 비밀번호를 발송하였습니다.");
 
   private final HttpStatus code;
   private final String message;

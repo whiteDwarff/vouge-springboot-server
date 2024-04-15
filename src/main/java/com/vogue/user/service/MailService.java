@@ -42,8 +42,9 @@ public class MailService {
     return key.toString() + "!";
   }
 
-  public String sendMail(EmailVO vo) {
+  public void sendMail(EmailVO vo) {
     String newPassword = temporaryPassword();
+    vo.setPassword(newPassword);
 
     MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
@@ -53,8 +54,6 @@ public class MailService {
       mimeMessageHelper.setSubject("[VOUGE] 임시 비밀번호 발급"); // 메일 제목
       mimeMessageHelper.setText(setContext(newPassword), true); // 메일 본문 내용, HTML 여부
       javaMailSender.send(mimeMessage);
-
-      return newPassword;
 
     } catch (MessagingException e) {
       throw new RuntimeException(e);
