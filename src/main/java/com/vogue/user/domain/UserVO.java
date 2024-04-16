@@ -19,7 +19,7 @@ public class UserVO {
   private String nickname;
   private String tel;
   private String photoURL;
-  private String idntf_cd;
+  private String idntfCd;
   private Date createdAt;
 
 }

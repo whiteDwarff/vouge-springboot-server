@@ -32,7 +32,6 @@ public class UserController {
     log.info("POST : signIn" + vo.toString());
 
     CmmnResponse response = userService.signInUser(vo);
-    log.info("message : " +  (String) response.getMessage());
     HttpStatus httpStatus = UserStatus.getStatusByMessage((String) response.getMessage());
 
     return ResponseEntity.status(httpStatus).body(response);

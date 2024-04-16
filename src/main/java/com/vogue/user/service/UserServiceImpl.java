@@ -48,6 +48,7 @@ public class UserServiceImpl implements UserService{
       // 아이디와 비밀번호가 모두 일치한 경우
       if (Objects.nonNull(user)) {
           message = UserStatus.LOGIN_OK.getMessage();
+          user.setPassword(null);
           response.put("user", user);
       }
       // 비밀번호가 일치하지 않은 경우
