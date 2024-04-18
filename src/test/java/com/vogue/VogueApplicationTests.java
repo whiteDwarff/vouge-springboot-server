@@ -1,5 +1,7 @@
 package com.vogue;
 
+import com.vogue.base.mapper.PermissionMapper;
+import com.vogue.base.domain.PermissionVO;
 import com.vogue.user.domain.SignUpVO;
 import com.vogue.user.mapper.UserMapper;
 import com.vogue.user.service.CaptchaService;
@@ -7,6 +9,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,6 +22,14 @@ class VogueApplicationTests {
 	UserMapper mapper;
 	@Autowired
 	CaptchaService service;
+
+	@Autowired
+	PermissionMapper iMapper;
+
+	@Test
+	void test() {
+		List<PermissionVO> a = iMapper.getPermission();
+	}
 
 	@Test
 	@DisplayName("회원가입 시 중복된 이메일 체크")
