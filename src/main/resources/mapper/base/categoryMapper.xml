@@ -5,4 +5,26 @@
     <select id="getCategory" resultType="com.vogue.base.domain.CategoryVO">
         SELECT * FROM base_category;
     </select>
+
+    <select id="duplicateName" parameterType="com.vogue.base.domain.CategoryVO" resultType="int">
+        SELECT COUNT(*) FROM base_category where name = #{name}
+    </select>
+
+    <insert id="insertCategory" parameterType="com.vogue.base.domain.CategoryVO">
+        INSERT INTO base_category(
+            upper_seq,
+            name,
+            url,
+            sort,
+            use_yn,
+            depth
+        ) VALUES (
+            #{upperSeq},
+            #{name},
+            #{url},
+            #{sort},
+            #{useYn},
+            #{depth}
+        )
+    </insert>
 </mapper>

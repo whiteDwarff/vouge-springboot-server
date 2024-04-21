@@ -4,6 +4,6 @@
 
     <select id="getPermission" resultType="com.vogue.base.domain.PermissionVO">
         SELECT idntf_cd, idntf_nm, memo, sort
-        FROM base_idntf_group;
+        FROM base_permission;
     </select>
 </mapper>

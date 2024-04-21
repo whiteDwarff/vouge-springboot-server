@@ -1,9 +1,6 @@
 package com.vogue.common;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -11,7 +8,6 @@ import java.util.Objects;
 @Data
 @ToString
 @NoArgsConstructor
-@AllArgsConstructor
 public class CmmnResponse {
 
   private String message;
@@ -22,5 +18,11 @@ public class CmmnResponse {
   }
   public Object get(String key) {
     return list.get(key);
+  }
+
+  @Builder
+  public CmmnResponse(String message,  HashMap<String, Object> list) {
+    this.message = message;
+    this.list = list;
   }
 }

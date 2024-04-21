@@ -9,4 +9,8 @@ import java.util.List;
 @Mapper
 public interface CategoryMapper {
   List<CategoryVO> getCategory();
+
+  int duplicateName(CategoryVO vo);
+
+  void insertCategory(CategoryVO vo);
 }

@@ -1,4 +1,4 @@
-package com.vogue.base;
+package com.vogue.base.controller;
 
 import com.vogue.base.service.BaseService;
 import org.springframework.http.ResponseEntity;
