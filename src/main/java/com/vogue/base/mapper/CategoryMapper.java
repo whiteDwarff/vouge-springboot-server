@@ -1,6 +1,7 @@
 package com.vogue.base.mapper;
 
 
+import com.vogue.base.domain.CategoryPermissionVO;
 import com.vogue.base.domain.CategoryVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -12,5 +13,7 @@ public interface CategoryMapper {
 
   int duplicateName(CategoryVO vo);
 
-  void insertCategory(CategoryVO vo);
+  int insertCategory(CategoryVO vo);
+
+  void insertCategoryPermissionGroup(CategoryPermissionVO vo);
 }

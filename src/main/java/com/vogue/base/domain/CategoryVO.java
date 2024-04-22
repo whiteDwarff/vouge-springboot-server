@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @ToString
@@ -21,10 +22,11 @@ public class CategoryVO {
   private int sort;
   private String useYn;
   private Date createdAt;
+  private List<CategoryPermissionVO> permission;
 
 
   @Builder
-  public CategoryVO(int seq, String name, int upperSeq, String url, int depth, int sort, String useYn, Date createdAt) {
+  public CategoryVO(int seq, String name, int upperSeq, String url, int depth, int sort, String useYn, Date createdAt, List<CategoryPermissionVO> permission) {
     this.seq = seq;
     this.name = name;
     this.upperSeq = seq;
@@ -33,5 +35,6 @@ public class CategoryVO {
     this.sort = sort;
     this.useYn = useYn;
     this.createdAt = createdAt;
+    this.permission = permission;
   }
 }

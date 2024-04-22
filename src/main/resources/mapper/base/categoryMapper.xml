@@ -6,11 +6,13 @@
         SELECT * FROM base_category;
     </select>
 
+    <!-- 카테고리 등록 01 - 등록된 카테고리명이 있는지 확인-->
     <select id="duplicateName" parameterType="com.vogue.base.domain.CategoryVO" resultType="int">
         SELECT COUNT(*) FROM base_category where name = #{name}
     </select>
 
-    <insert id="insertCategory" parameterType="com.vogue.base.domain.CategoryVO">
+    <!-- 카테고리 등록 02 - 카테고리 저장 후 seq 반환-->
+    <select id="insertCategory" parameterType="com.vogue.base.domain.CategoryVO" resultType="int">
         INSERT INTO base_category(
             upper_seq,
             name,
@@ -25,6 +27,26 @@
             #{sort},
             #{useYn},
             #{depth}
+        )
+        RETURNING seq
+    </select>
+
+    <!-- 카테고리 등록 03 - 권한별 카테고리 등록 -->
+    <insert id="insertCategoryPermissionGroup" parameterType="com.vogue.base.domain.CategoryPermissionVO">
+        INSERT INTO base_permission_group (
+            idntf_cd,
+            category_seq,
+            access,
+            add,
+            update,
+            delete
+        ) VALUES (
+            #{idntfCd},
+            #{categorySeq},
+            #{access},
+            #{add},
+            #{update},
+            #{delete}
         )
     </insert>
 </mapper>

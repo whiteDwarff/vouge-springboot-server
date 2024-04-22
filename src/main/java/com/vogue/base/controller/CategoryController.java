@@ -1,6 +1,7 @@
 package com.vogue.base.controller;
 
 
+import com.vogue.base.domain.CategoryPermissionVO;
 import com.vogue.base.domain.CategoryVO;
 import com.vogue.base.service.CategoryService;
 import com.vogue.code.CategoryStatus;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -28,6 +31,12 @@ public class CategoryController {
   public ResponseEntity<?> insertCategory(@RequestBody CategoryVO vo) {
 
     log.info("/api/ctgry/insert : " + vo.toString());
+    log.info("=====================================");
+    List<CategoryPermissionVO> list = vo.getPermission();
+    for(CategoryPermissionVO a : list) {
+      log.info(a.toString());
+    }
+    log.info("=====================================");
     CmmnResponse response = categoryService.InsertCategory(vo);
     int result = (int) response.get("result");
 
