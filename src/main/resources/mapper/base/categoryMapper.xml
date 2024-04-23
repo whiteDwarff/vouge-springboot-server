@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.vogue.base.mapper.CategoryMapper">
 
-    <select id="getCategory" resultType="com.vogue.base.domain.CategoryVO">
-        SELECT * FROM base_category;
-    </select>
+<!--    <select id="getCategory" resultType="com.vogue.base.domain.CategoryVO">-->
+<!--        SELECT * FROM base_category;-->
+<!--    </select>-->
 
     <!-- 카테고리 등록 01 - 등록된 카테고리명이 있는지 확인-->
     <select id="duplicateName" parameterType="com.vogue.base.domain.CategoryVO" resultType="int">
@@ -49,4 +49,22 @@
             #{delete}
         )
     </insert>
+
+    <select id="getCategory" resultType="com.vogue.base.domain.CategoryVO">
+        select seq,
+               name,
+               depth,
+               upper_seq as upperSeq,
+               sort,
+               (select coalesce(json_agg(json_build_object('seq', mid.seq,
+                                'name', mid.name,
+                                'depth', mid.depth,
+                                'upperSeq', mid.upper_seq,
+                                'sort', mid.sort) order by mid.sort asc), '[]')
+                from base_category mid
+                where depth = 2) mid_category
+        from base_category
+        where depth = 1
+        order by sort asc
+    </select>
 </mapper>

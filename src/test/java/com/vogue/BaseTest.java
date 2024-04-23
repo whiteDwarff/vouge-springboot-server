@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @SpringBootTest
 public class BaseTest {
@@ -34,6 +36,10 @@ public class BaseTest {
   @DisplayName("카테고리 조회")
   void getCategory() {
     List<CategoryVO> list = c_mapper.getCategory();
+
+    for(CategoryVO a : list) {
+      System.out.println(a.toString());
+    }
   }
 
 }

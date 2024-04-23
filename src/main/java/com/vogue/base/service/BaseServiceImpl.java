@@ -1,10 +1,13 @@
 package com.vogue.base.service;
 
 
+import com.vogue.base.domain.CategoryVO;
 import com.vogue.base.mapper.CategoryMapper;
 import com.vogue.base.mapper.PermissionMapper;
 import com.vogue.common.CmmnResponse;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class BaseServiceImpl implements BaseService {
@@ -22,6 +25,7 @@ public class BaseServiceImpl implements BaseService {
     CmmnResponse response = new CmmnResponse();
     response.put("permission", permissionMapper.getPermission());
     response.put("category", categoryMapper.getCategory());
+
     return response;
   }
 }
