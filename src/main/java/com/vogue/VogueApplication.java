@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @MapperScan("com.vogue.user.mapper")
 @MapperScan("com.vogue.base.mapper")
+@MapperScan("com.vogue.admin.category.mapper")
 @SpringBootApplication
 public class VogueApplication {
 

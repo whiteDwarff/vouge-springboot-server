@@ -1,7 +1,7 @@
 package com.vogue;
 
 import com.vogue.base.mapper.PermissionMapper;
-import com.vogue.base.domain.PermissionVO;
+import com.vogue.base.domain.AuthPermissionVO;
 import com.vogue.user.domain.SignUpVO;
 import com.vogue.user.mapper.UserMapper;
 import com.vogue.user.service.CaptchaService;
@@ -28,7 +28,7 @@ class VogueApplicationTests {
 
 	@Test
 	void test() {
-		List<PermissionVO> a = iMapper.getPermission();
+		List<AuthPermissionVO> a = iMapper.getPermission();
 	}
 
 	@Test

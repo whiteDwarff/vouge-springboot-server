@@ -1,6 +1,7 @@
 package com.vogue.base.domain;
 
 
+import com.vogue.admin.category.domain.CategoryPermissionVO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
