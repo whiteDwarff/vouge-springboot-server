@@ -54,5 +54,28 @@ public class CategoryController {
     return ResponseEntity.ok().body(response);
   }
 
+  @GetMapping("/selectOne")
+  public ResponseEntity<?> selectCategoryInfo(@RequestParam("seq") int seq) throws Exception{
 
-}
+    log.info("/api/admin/category/selectOne : " + String.valueOf(seq));
+
+    CmmnResponse response = categoryService.selectCategoryInfo(seq);
+
+    return ResponseEntity.ok(response);
+  }
+
+  @PatchMapping("/update")
+  public ResponseEntity<?> updateCategory(@RequestBody CategoryVO vo) throws Exception{
+
+    log.info("/api/admin/category/update : " + vo.toString());
+    CmmnResponse response = categoryService.updateCategory(vo);
+
+    HttpStatus status = (int) response.get("result") > 0 ?
+      CategoryStatus.UPDATE.getCode() : CategoryStatus.INTERNAL_SERVER_ERROR_UPDATE.getCode();
+
+    return ResponseEntity.status(status).body(response);
+  }
+
+
+
+  }

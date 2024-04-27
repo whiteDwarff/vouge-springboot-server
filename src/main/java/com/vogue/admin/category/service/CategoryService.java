@@ -9,4 +9,10 @@ public interface CategoryService {
 
   CmmnResponse getServiceList() throws Exception;
 
+  CmmnResponse selectCategoryInfo(int seq) throws Exception;
+
+  CmmnResponse updateCategory(CategoryVO vo) throws Exception;
+
+  CmmnResponse deleteCategory(CategoryVO vo) throws Exception;
+
 }

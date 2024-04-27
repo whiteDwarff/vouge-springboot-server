@@ -10,6 +10,7 @@ import java.util.Date;
 public class CategoryPermissionVO {
   private int seq;
   private String idntfCd;
+  private String idntfNm;
   private int categorySeq;
   private String access;
   private String add;

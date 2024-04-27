@@ -10,19 +10,21 @@
     <!-- 카테고리 등록 02 - 카테고리 저장 후 seq 반환-->
     <select id="insertCategory" parameterType="com.vogue.base.domain.CategoryVO" resultType="int">
         INSERT INTO base_category(
-        upper_seq,
-        name,
-        url,
-        sort,
-        use_yn,
-        depth
+            upper_seq,
+            name,
+            url,
+            sort,
+            use_yn,
+            post_yn,
+            depth
         ) VALUES (
-        #{upperSeq},
-        #{name},
-        #{url},
-        #{sort},
-        #{useYn},
-        #{depth}
+            #{upperSeq},
+            #{name},
+            #{url},
+            #{sort},
+            #{useYn},
+            #{postYn},
+            #{depth}
         )
         RETURNING seq
     </select>
@@ -67,8 +69,8 @@
 
     <select id="getPermissionALl" resultType="hashmap">
         select
-            idntf_cd,
-            idntf_nm,
+            idntf_cd as "idntfCd",
+            idntf_nm as "idntfNm",
             'Y' as access,
             'Y' as add,
             'Y' as update,
@@ -89,4 +91,59 @@
         where a.depth <![CDATA[<]]> 2
         order by a.sort asc
     </select>
+
+    <!-- seq 값을 가진 카테고리의 상세항목 조회 -->
+    <select id="selectOneCategory" parameterType="int"  resultType="com.vogue.base.domain.CategoryVO">
+        select
+            seq,
+            name,
+            url,
+            sort,
+            post_yn "postYn",
+            use_yn "useYn",
+            depth,
+            upper_seq "upperSeq"
+        from base_category where seq = #{seq}
+    </select>
+
+    <!-- upper_seq 값을 가진 권한의 상세항목 조회 -->
+    <select id="selectOneCategoryPermission" parameterType="int"  resultType="com.vogue.admin.category.domain.CategoryPermissionVO">
+        select
+            bpg.idntf_cd,
+            bpg.access,
+            bpg.add,
+            bpg.update,
+            bpg.delete,
+            bp.idntf_nm
+        from base_permission_group bpg
+        join base_permission bp on bp.idntf_cd = bpg.idntf_cd
+        where category_seq = #{seq}
+    </select>
+
+    <!-- 카테고리 정보 수정 -->
+    <update id="updateCategory"  parameterType="com.vogue.base.domain.CategoryVO">
+        update base_category set
+            upper_seq =  #{upperSeq},
+            name = #{name},
+            url = #{url},
+            sort = #{sort},
+            use_yn = #{useYn},
+            post_yn = #{postYn},
+            depth =  #{depth}
+        where seq = #{seq}
+    </update>
+
+    <!-- seq 값을 가진 항목 삭제 ( permissionGroup )-->
+    <delete id="deleteCategoryPermissionGroup" parameterType="com.vogue.base.domain.CategoryVO">
+        delete from base_permission_group
+        where category_seq = #{seq}
+    </delete>
+
+    <!-- seq 값을 가진 항목 삭제 ( category)-->
+    <delete id="deleteCategory" parameterType="com.vogue.base.domain.CategoryVO">
+        delete from base_category
+        where seq = #{seq}
+    </delete>
+
+
 </mapper>

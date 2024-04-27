@@ -21,4 +21,14 @@ public interface CategoryMapper {
   List<HashMap<String, Object>> getPermissionALl() throws Exception;
 
   List<HashMap<String, Object>> getSelectOption() throws Exception;
+
+  CategoryVO selectOneCategory(int seq) throws Exception;
+
+  List<CategoryPermissionVO> selectOneCategoryPermission(int seq) throws Exception;
+
+  int updateCategory(CategoryVO vo) throws Exception;
+
+  int deleteCategoryPermissionGroup(CategoryVO vo) throws Exception;
+
+  int deleteCategory(CategoryVO vo) throws Exception;
 }
