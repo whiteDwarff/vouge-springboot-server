@@ -109,6 +109,7 @@
     <!-- upper_seq 값을 가진 권한의 상세항목 조회 -->
     <select id="selectOneCategoryPermission" parameterType="int"  resultType="com.vogue.admin.category.domain.CategoryPermissionVO">
         select
+            bpg.seq,
             bpg.idntf_cd,
             bpg.access,
             bpg.add,

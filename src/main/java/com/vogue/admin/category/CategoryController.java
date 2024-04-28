@@ -42,7 +42,7 @@ public class CategoryController {
     return ResponseEntity.status(httpStatus).body(response);
   }
 
-  @GetMapping("/get")
+  @GetMapping("get")
   public ResponseEntity<?> getCategory() throws Exception{
 
     log.info("/api/admin/category/get : ");
@@ -54,7 +54,7 @@ public class CategoryController {
     return ResponseEntity.ok().body(response);
   }
 
-  @GetMapping("/selectOne")
+  @GetMapping("selectOne")
   public ResponseEntity<?> selectCategoryInfo(@RequestParam("seq") int seq) throws Exception{
 
     log.info("/api/admin/category/selectOne : " + String.valueOf(seq));
@@ -64,7 +64,7 @@ public class CategoryController {
     return ResponseEntity.ok(response);
   }
 
-  @PatchMapping("/update")
+  @PatchMapping("update")
   public ResponseEntity<?> updateCategory(@RequestBody CategoryVO vo) throws Exception{
 
     log.info("/api/admin/category/update : " + vo.toString());
@@ -74,6 +74,20 @@ public class CategoryController {
       CategoryStatus.UPDATE.getCode() : CategoryStatus.INTERNAL_SERVER_ERROR_UPDATE.getCode();
 
     return ResponseEntity.status(status).body(response);
+  }
+
+  @DeleteMapping("delete")
+  public ResponseEntity<?> deleteCategory(@RequestParam("seq") int seq) throws Exception {
+
+    log.info("/api/admin/category/delete : " + String.valueOf(seq));
+
+    CategoryVO category = CategoryVO.builder()
+            .seq(seq)
+            .build();
+
+    CmmnResponse response = categoryService.deleteCategory(category);
+
+    return ResponseEntity.ok(response);
   }
 
 
