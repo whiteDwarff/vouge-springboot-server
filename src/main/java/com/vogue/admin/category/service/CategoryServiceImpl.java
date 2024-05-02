@@ -67,12 +67,6 @@ public class CategoryServiceImpl implements CategoryService {
     CategoryVO category = categoryMapper.selectOneCategory(seq);
     category.setPermission(categoryMapper.selectOneCategoryPermission(seq));
 
-    for(CategoryPermissionVO vo : category.getPermission()) {
-      log.info("=============================================");
-      log.info(vo.toString());
-      log.info("=============================================");
-
-    }
     response.put("form", category);
 
     return response;

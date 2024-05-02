@@ -1,6 +1,5 @@
 package com.vogue;
 
-import com.vogue.base.mapper.PermissionMapper;
 import com.vogue.base.domain.AuthPermissionVO;
 import com.vogue.user.domain.SignUpVO;
 import com.vogue.user.mapper.UserMapper;

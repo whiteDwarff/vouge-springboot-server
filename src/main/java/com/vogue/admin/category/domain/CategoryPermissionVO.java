@@ -18,4 +18,16 @@ public class CategoryPermissionVO {
   private String delete;
   Date created_at;
 
+  @Builder
+  public CategoryPermissionVO(int seq, String idntfCd, String idntfNm, int categorySeq,  String access, String add, String update, String delete) {
+    this.seq = seq;
+    this.idntfCd = idntfCd;
+    this.idntfNm = idntfNm;
+    this.categorySeq = categorySeq;
+    this.access = access;
+    this.add = add;
+    this.update = update;
+    this.delete = delete;
+  }
+
 }
