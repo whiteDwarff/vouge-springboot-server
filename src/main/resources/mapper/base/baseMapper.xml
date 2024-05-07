@@ -8,6 +8,7 @@
                 high.depth,
                 high.upper_seq,
                 high.sort,
+                high.post_yn,
                 (select coalesce(json_agg(json_build_object('seq', mid.seq,
                                     'name', mid.name,
                                     'depth', mid.depth,
@@ -47,5 +48,9 @@
         left join base_category b on a.upper_seq = b.seq
         where a.depth <![CDATA[<]]> 2
         order by a.sort asc
+    </select>
+
+    <select id="getAuthPermission" resultType="com.vogue.base.domain.AuthPermissionVO">
+        select * from base_permission
     </select>
 </mapper>

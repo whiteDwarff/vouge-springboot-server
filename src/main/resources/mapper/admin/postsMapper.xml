@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vogue.admin.posts.mapper.NoticeMapper">
+
+    <insert id="insertNotice" parameterType="hashmap">
+        insert into notice (
+            upper_seq,
+            lower_seq,
+            title,
+            content,
+            use_yn
+        ) values (
+            #{upperSeq},
+            #{lowerSeq},
+            #{title},
+            #{content},
+            #{useYn}
+        )
+    </insert>
+
+    <select id="selectNoticeCount" parameterType="hashmap" resultType="int">
+        select count(*) from notice;
+    </select>
+
+    <select id="selectNoticeList" parameterType="hashmap" resultType="hashmap">
+        select
+            n.seq,
+            n.title as content,
+            case when n.use_yn = 'Y' then '사용'
+            else '미사용'
+            end "useYn",
+            to_char(n.created_at, 'yyyy-mm-dd') as "createdAt",
+            bc.name as category
+        from notice n
+        join base_category bc on n.lower_seq = bc.seq
+        order by n.created_at desc
+        limit 5 offset #{offset}
+    </select>
+
+
+</mapper>
