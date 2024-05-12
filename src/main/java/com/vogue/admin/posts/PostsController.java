@@ -1,24 +1,18 @@
 package com.vogue.admin.posts;
 
 
-import com.vogue.admin.posts.domain.NoticeVO;
 import com.vogue.admin.posts.service.NoticeService;
-import com.vogue.code.AdminPostsStatus;
 import com.vogue.common.BaseResponse;
-import com.vogue.common.CmmnResponse;
-import com.vogue.common.DataSet;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 
 @Slf4j
 @RequestMapping("/api/admin/posts/*")
 @RestController
-public class PostsController extends HashMap{
+public class PostsController{
 
   private final NoticeService noticeService;
 
@@ -26,20 +20,67 @@ public class PostsController extends HashMap{
     this.noticeService = noticeService;
   }
 
-  @PostMapping("insertNotice")
-  public BaseResponse InsertNotice(@RequestBody HashMap<String, Object> param) throws Exception{
+  /**
+   * @param     : HashMap
+   * @Exception : throws Exception
+   * @return    : ResponseEntity
+   * 게시판 템플릿 등록, 수정 처리
+   * */
+  @PostMapping("saveNotice")
+  public BaseResponse saveNotice(@RequestBody HashMap<String, Object> param) throws Exception{
 
-    log.info("POST : /api/admin/posts/insertNotice : " + param.toString());
+    log.info("POST : /api/admin/posts/saveNotice : " + param.toString());
 
-    return noticeService.InsertNotice(param);
-
+    return noticeService.saveNotice(param);
   }
-
+  /**
+   * @param     : HashMap
+   * @Exception : throws Exception
+   * @return    : ResponseEntity
+   * 게시판 템플릿 리스트 호출
+   * */
   @PostMapping("get")
   public BaseResponse getPostsList(@RequestBody HashMap<String, Object> param) throws Exception{
 
     log.info("GET : /api/admin/posts/get : " + param.toString());
 
     return noticeService.getPostsList(param);
+  }
+  /**
+   * @param     : HashMap
+   * @Exception : throws Exception
+   * @return    : ResponseEntity
+   * 하나의 게시판 템플릿  조회
+   * */
+  @GetMapping("selectOne/{seq}")
+  public BaseResponse getSelectOne(@PathVariable("seq") Long seq) throws Exception{
+
+    log.info("GET : /api/admin/posts/selectOne/" + String.valueOf(seq));
+
+    return noticeService.selectOneNotice(seq);
+  }
+
+/*  @PostMapping("delete")
+  public void deleteNotice(@RequestBody HashMap<String, Object> param) throws Exception {
+
+    log.info("POST : /api/admin/posts/delete : " + param.toString());
+
+    for (HashMap<String, Object> data : (List<HashMap<String, Object>>) param.get("data")) {
+      log.info(data.toString());
+    }
+  }*/
+  @PostMapping("delete")
+  public BaseResponse deleteNotice(@RequestBody List<HashMap<String, Object>> param) throws Exception{
+
+     log.info("POST : /api/admin/posts/delete : " + param.toString());
+
+     return noticeService.deleteNotice(param);
+
+//     for(HashMap<String, Object> notice : param) {
+//       log.info("==============================");
+//       log.info(notice.toString());
+//       log.info(notice.get("seq").toString());
+//
+//     }
   }
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -24,9 +25,17 @@ public class NoticeServiceImpl implements NoticeService {
   }
 
   @Override
-  public BaseResponse InsertNotice(HashMap<String, Object> param) throws Exception {
+  public BaseResponse saveNotice(HashMap<String, Object> param) throws Exception {
 
-    int result = noticeMapper.insertNotice(param);
+    int result = 0;
+
+    // 등록, form의 기본값에 seq가 없다.
+    if(!Objects.nonNull(param.get("seq"))) {
+      result = noticeMapper.insertNotice(param);
+    // 수정, tablerow 클릭 시 form의 value엔 seq가 셋팅된다.
+    } else {
+      result = noticeMapper.updateNotice(param);
+    }
 
     AdminPostsStatus state =
       result == 1 ? AdminPostsStatus.NOTICE_CREATED : AdminPostsStatus.INTERNAL_SERVER_ERROR;
@@ -49,8 +58,6 @@ public class NoticeServiceImpl implements NoticeService {
 
       map.put("page", page.setPagination(count, (int) param.get("current")));
 
-
-      log.info(page.toString());
       param.put("offset", page.getOffset());
       // 게시판 템플릿 리스트
       List<HashMap<String, Object>> noticeList = noticeMapper.selectNoticeList(param);
@@ -59,6 +66,45 @@ public class NoticeServiceImpl implements NoticeService {
     return BaseResponse.builder()
             .status(HttpStatus.OK)
             .list(map)
+            .build();
+  }
+
+  @Override
+  public BaseResponse selectOneNotice(Long seq) throws Exception {
+
+    HashMap<String, Object> map = new HashMap<>();
+    HttpStatus status;
+
+    if(Objects.nonNull(seq)) {
+      map = noticeMapper.selectOneNotice(seq);
+      status = HttpStatus.OK;
+    } else {
+      map.put("message", "잘못된 접근방식 입니다.");
+      status = HttpStatus.BAD_REQUEST;
+    }
+
+    return BaseResponse.builder()
+            .status(status)
+            .list(map)
+            .build();
+  }
+
+  @Override
+  public BaseResponse deleteNotice(List<HashMap<String, Object>> param) throws Exception {
+
+    HttpStatus status = HttpStatus.OK;
+    int result = 0;
+
+    if(!param.isEmpty()) {
+      for(HashMap<String, Object> notice : param) {
+        noticeMapper.deleteNotice(notice);
+        result ++;
+      }
+    }
+
+    return BaseResponse.builder()
+            .status(AdminPostsStatus.DELETE_OK.getCode())
+            .message(String.valueOf(result) + AdminPostsStatus.DELETE_OK.getMessage())
             .build();
   }
 }

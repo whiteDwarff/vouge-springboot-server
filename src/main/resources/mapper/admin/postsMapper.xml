@@ -7,16 +7,30 @@
             upper_seq,
             lower_seq,
             title,
-            content,
+            notice,
+            template,
             use_yn
         ) values (
             #{upperSeq},
             #{lowerSeq},
             #{title},
-            #{content},
+            #{notice},
+            #{template},
             #{useYn}
         )
     </insert>
+
+    <update id="updateNotice" parameterType="hashmap">
+        update notice set
+            upper_seq = #{upperSeq},
+            lower_seq = #{lowerSeq},
+            title = #{title},
+            notice = #{notice},
+            template = #{template},
+            use_yn = #{useYn},
+            updated_at = now()
+        where seq = #{seq}
+    </update>
 
     <select id="selectNoticeCount" parameterType="hashmap" resultType="int">
         select count(*) from notice;
@@ -27,15 +41,35 @@
             n.seq,
             n.title as content,
             case when n.use_yn = 'Y' then '사용'
-            else '미사용'
+                else '미사용'
             end "useYn",
             to_char(n.created_at, 'yyyy-mm-dd') as "createdAt",
+            n.notice,
+            n.template,
             bc.name as category
         from notice n
         join base_category bc on n.lower_seq = bc.seq
         order by n.created_at desc
         limit 5 offset #{offset}
     </select>
+
+    <select id="selectOneNotice"  parameterType="Long" resultType="hashmap">
+        select
+            seq,
+            template,
+            notice,
+            lower_seq "lowerSeq",
+            upper_seq "upperSeq",
+            use_yn "useYn",
+            created_at "createdAt",
+            title
+        from notice where seq = #{seq}
+    </select>
+
+    <delete id="deleteNotice" parameterType="hashmap">
+        delete from notice
+        where seq = #{seq}
+    </delete>
 
 
 </mapper>

@@ -11,7 +11,7 @@ public enum CategoryStatus {
 
   CONFLICT_NAME(HttpStatus.CONFLICT, "등록된 카테고리 이름이 존재합니다."),
 
-  UPDATE(HttpStatus.CREATED, "카테고리가 수정되었습니다"),
+  UPDATE(HttpStatus.OK, "카테고리가 수정되었습니다"),
 
   INTERNAL_SERVER_ERROR_UPDATE(HttpStatus.INTERNAL_SERVER_ERROR, "카테고리 수정에 실패하였습니다"),
 
