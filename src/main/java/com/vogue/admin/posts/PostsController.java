@@ -60,27 +60,11 @@ public class PostsController{
     return noticeService.selectOneNotice(seq);
   }
 
-/*  @PostMapping("delete")
-  public void deleteNotice(@RequestBody HashMap<String, Object> param) throws Exception {
-
-    log.info("POST : /api/admin/posts/delete : " + param.toString());
-
-    for (HashMap<String, Object> data : (List<HashMap<String, Object>>) param.get("data")) {
-      log.info(data.toString());
-    }
-  }*/
   @PostMapping("delete")
   public BaseResponse deleteNotice(@RequestBody List<HashMap<String, Object>> param) throws Exception{
 
      log.info("POST : /api/admin/posts/delete : " + param.toString());
 
      return noticeService.deleteNotice(param);
-
-//     for(HashMap<String, Object> notice : param) {
-//       log.info("==============================");
-//       log.info(notice.toString());
-//       log.info(notice.get("seq").toString());
-//
-//     }
   }
 }

@@ -33,7 +33,32 @@
     </update>
 
     <select id="selectNoticeCount" parameterType="hashmap" resultType="int">
-        select count(*) from notice;
+        select count(*) from (
+            select
+                n.seq,
+                n.title as content,
+                case when n.use_yn = 'Y' then '사용'
+                else '미사용'
+                end "useYn",
+                to_char(n.created_at, 'yyyy-mm-dd') as "createdAt",
+                n.notice,
+                n.template,
+                n.upper_seq,
+                n.use_yn,
+                bc.name as category
+            from notice n
+            join base_category bc on n.lower_seq = bc.seq
+            where 1 = 1
+            <if test="option == 'title' and value != ''">
+                and n.title like concat('%', #{value}, '%')
+            </if>
+            <if test="option == 'upperSeq' and value != ''">
+                and n.upper_seq = #{value}
+            </if>
+            <if test="option == 'useYn' and value != ''">
+                and n.use_yn = #{value}
+            </if>
+        ) a
     </select>
 
     <select id="selectNoticeList" parameterType="hashmap" resultType="hashmap">
@@ -46,9 +71,21 @@
             to_char(n.created_at, 'yyyy-mm-dd') as "createdAt",
             n.notice,
             n.template,
+            n.upper_seq,
+            n.use_yn,
             bc.name as category
         from notice n
         join base_category bc on n.lower_seq = bc.seq
+        where 1 = 1
+        <if test="option == 'title' and value != ''">
+            and n.title like concat('%', #{value}, '%')
+        </if>
+        <if test="option == 'upperSeq' and value != ''">
+            and n.upper_seq = #{value}
+        </if>
+        <if test="option == 'useYn' and value != ''">
+            and n.use_yn = #{value}
+        </if>
         order by n.created_at desc
         limit 5 offset #{offset}
     </select>

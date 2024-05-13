@@ -53,15 +53,18 @@ public class NoticeServiceImpl implements NoticeService {
     int count = noticeMapper.selectNoticeCount(param);
     HashMap<String, Object> map = new HashMap<>();
 
-      // 페이지 정보
-      BasePagination page = new BasePagination();
 
-      map.put("page", page.setPagination(count, (int) param.get("current")));
+    log.info("============ count : " + String.valueOf(count));
+    log.info("============ current : " + String.valueOf(param.get("current")));
+    // 페이지 정보
+    BasePagination page = new BasePagination();
 
-      param.put("offset", page.getOffset());
-      // 게시판 템플릿 리스트
-      List<HashMap<String, Object>> noticeList = noticeMapper.selectNoticeList(param);
-      map.put("notice", noticeList);
+    map.put("page", page.setPagination(count, (int) param.get("current")));
+
+    param.put("offset", page.getOffset());
+    // 게시판 템플릿 리스트
+    List<HashMap<String, Object>> noticeList = noticeMapper.selectNoticeList(param);
+    map.put("notice", noticeList);
 
     return BaseResponse.builder()
             .status(HttpStatus.OK)
