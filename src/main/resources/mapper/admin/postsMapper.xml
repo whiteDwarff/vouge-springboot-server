@@ -3,6 +3,12 @@
 <mapper namespace="com.vogue.admin.posts.mapper.NoticeMapper">
 
     <insert id="insertNotice" parameterType="hashmap">
+        /* 공지사항, 템플릿 등록 */
+        <!-- parameterType에 seq값이 바로 담긴다.  -->
+        <selectKey keyProperty="seq" order="AFTER" resultType="int">
+            SELECT currval('notice_seq') as seq
+        </selectKey>
+
         insert into notice (
             upper_seq,
             lower_seq,
@@ -19,8 +25,8 @@
             #{useYn}
         )
     </insert>
-
     <update id="updateNotice" parameterType="hashmap">
+        /*  공지사항, 템플릿 수정 */
         update notice set
             upper_seq = #{upperSeq},
             lower_seq = #{lowerSeq},
@@ -31,6 +37,30 @@
             updated_at = now()
         where seq = #{seq}
     </update>
+
+    <insert id="insertPrepend" parameterType="hashmap">
+        /* 말머리 등록 */
+        <foreach collection="prepend"  item="item" separator=";">
+            insert into prepend (
+                upperSeq,
+                prepend
+            ) values (
+                #{seq},
+                #{item}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deletePrepend" parameterType="hashmap">
+        /* 말머리 삭제 */
+        delete from prepend
+        where upperSeq = #{seq}
+    </delete>
+
+    <select id="selectOnePrepend" parameterType="Long" resultType="String">
+        /*  게시글에 맞는 말머리 리스트 검색 */
+        select prepend from prepend where upperSeq = #{seq}
+    </select>
 
     <select id="selectNoticeCount" parameterType="hashmap" resultType="int">
         select count(*) from (
@@ -87,7 +117,7 @@
             and n.use_yn = #{value}
         </if>
         order by n.created_at desc
-        limit 5 offset #{offset}
+        limit #{maxPages} offset #{offset}
     </select>
 
     <select id="selectOneNotice"  parameterType="Long" resultType="hashmap">

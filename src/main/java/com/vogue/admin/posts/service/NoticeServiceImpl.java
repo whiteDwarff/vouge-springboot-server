@@ -1,15 +1,14 @@
 package com.vogue.admin.posts.service;
 
-import com.vogue.admin.posts.domain.NoticeVO;
 import com.vogue.admin.posts.mapper.NoticeMapper;
 import com.vogue.code.AdminPostsStatus;
 import com.vogue.common.BasePagination;
 import com.vogue.common.BaseResponse;
-import com.vogue.common.CmmnResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +34,15 @@ public class NoticeServiceImpl implements NoticeService {
     // 수정, tablerow 클릭 시 form의 value엔 seq가 셋팅된다.
     } else {
       result = noticeMapper.updateNotice(param);
+      // 말머리 삭제 후 재등록
+      noticeMapper.deletePrepend(param);
+    }
+
+    // 빈값 확인용
+    ArrayList<String> prepend = (ArrayList<String>) param.get("prepend");
+    // 말머리 등록
+    if(param.get("prependYn").equals("Y") && !prepend.isEmpty()) {
+      noticeMapper.insertPrepend(param);
     }
 
     AdminPostsStatus state =
@@ -53,9 +61,6 @@ public class NoticeServiceImpl implements NoticeService {
     int count = noticeMapper.selectNoticeCount(param);
     HashMap<String, Object> map = new HashMap<>();
 
-
-    log.info("============ count : " + String.valueOf(count));
-    log.info("============ current : " + String.valueOf(param.get("current")));
     // 페이지 정보
     BasePagination page = new BasePagination();
 
@@ -79,7 +84,17 @@ public class NoticeServiceImpl implements NoticeService {
     HttpStatus status;
 
     if(Objects.nonNull(seq)) {
-      map = noticeMapper.selectOneNotice(seq);
+      // 템플릿 상세 데이터
+      HashMap<String, Object> form = noticeMapper.selectOneNotice(seq);
+      // 말머리
+      List<String> prepend = noticeMapper.selectOnePrepend(seq);
+
+      String prependYn = prepend.isEmpty() ? "N" : "Y";
+
+      form.put("prependYn", prependYn);
+      form.put("prepend", prepend);
+      map.put("form", form);
+
       status = HttpStatus.OK;
     } else {
       map.put("message", "잘못된 접근방식 입니다.");

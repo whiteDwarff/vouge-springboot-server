@@ -13,6 +13,12 @@ public interface NoticeMapper {
 
   int updateNotice(HashMap<String, Object> param) throws Exception;
 
+  void insertPrepend(HashMap<String, Object> param) throws Exception;
+
+  void deletePrepend(HashMap<String, Object> param) throws Exception;
+
+  List<String> selectOnePrepend(Long seq) throws Exception;
+
   int selectNoticeCount(HashMap<String, Object> param) throws Exception;
 
   List<HashMap<String, Object>> selectNoticeList(HashMap<String, Object> param) throws Exception;

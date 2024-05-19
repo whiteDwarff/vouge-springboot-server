@@ -23,7 +23,7 @@ public class BasePagination {
 
   private int offset;
 
-  private final int maxPages = 5;
+  private final int maxPages = 10;
 
   @Builder
   public BasePagination(int min, int max, int current, int offset) {
