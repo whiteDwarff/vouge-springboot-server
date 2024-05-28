@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.vogue.base.mapper.PermissionMapper">
-
-    <select id="getPermission" resultType="com.vogue.base.domain.AuthPermissionVO">
-        SELECT idntf_cd, idntf_nm, memo, sort
-        FROM base_permission;
-    </select>
-</mapper>

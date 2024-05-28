@@ -119,6 +119,7 @@
         from base_permission_group bpg
         join base_permission bp on bp.idntf_cd = bpg.idntf_cd
         where category_seq = #{seq}
+        order by sort asc
     </select>
 
     <!-- 카테고리 정보 수정 -->

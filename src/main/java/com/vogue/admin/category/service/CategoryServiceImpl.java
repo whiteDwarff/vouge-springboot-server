@@ -49,17 +49,6 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
-  public CmmnResponse getServiceList() throws Exception {
-    CmmnResponse response = new CmmnResponse();
-
-    response.put("permission", categoryMapper.getPermissionALl());
-    response.put("category", categoryMapper.getCategoryAll());
-    response.put("options", categoryMapper.getSelectOption());
-
-    return response;
-  }
-
-  @Override
   public CmmnResponse selectCategoryInfo(int seq) throws Exception {
 
     CmmnResponse response = new CmmnResponse();

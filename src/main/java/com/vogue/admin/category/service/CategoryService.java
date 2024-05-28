@@ -7,8 +7,6 @@ public interface CategoryService {
 
   CmmnResponse InsertCategory(CategoryVO vo) throws Exception;
 
-  CmmnResponse getServiceList() throws Exception;
-
   CmmnResponse selectCategoryInfo(int seq) throws Exception;
 
   CmmnResponse updateCategory(CategoryVO vo) throws Exception;

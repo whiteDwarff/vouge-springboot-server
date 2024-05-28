@@ -42,18 +42,6 @@ public class CategoryController {
     return ResponseEntity.status(httpStatus).body(response);
   }
 
-  @GetMapping("get")
-  public ResponseEntity<?> getCategory() throws Exception{
-
-    log.info("/api/admin/category/get : ");
-
-    CmmnResponse response = categoryService.getServiceList();
-
-    log.info(response.getList().toString());
-
-    return ResponseEntity.ok().body(response);
-  }
-
   @GetMapping("selectOne")
   public ResponseEntity<?> selectCategoryInfo(@RequestParam("seq") int seq) throws Exception{
 
