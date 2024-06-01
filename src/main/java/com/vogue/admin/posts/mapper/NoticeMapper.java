@@ -1,6 +1,5 @@
 package com.vogue.admin.posts.mapper;
 
-import com.vogue.admin.posts.domain.NoticeVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.HashMap;

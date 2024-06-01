@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @MapperScan("com.vogue.base.mapper")
 @MapperScan("com.vogue.admin.category.mapper")
 @MapperScan("com.vogue.admin.posts.mapper")
+@MapperScan("com.vogue.admin.schedule.mapper")
 @SpringBootApplication
 public class VogueApplication {
 

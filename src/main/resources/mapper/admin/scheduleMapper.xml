@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vogue.admin.schedule.mapper.ScheduleMapper">
+
+    <insert id="insertSchedule" parameterType="hashmap">
+        INSERT INTO schedule (
+            title,
+            content,
+            start,
+            end,
+            day_start,
+            day_end,
+            time_start,
+            time_end,
+            display,
+            color,
+            author
+        ) VALUES (
+            #{title},
+            #{content},
+            #{start},
+            #{end},
+            #{dayStart},
+            #{dayEnd},
+            #{timeStart},
+            #{timeEnd},
+            #{display},
+            #{color},
+            #{author}
+        )
+    </insert>
+
+</mapper>
