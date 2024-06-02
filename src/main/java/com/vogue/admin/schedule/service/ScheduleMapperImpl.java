@@ -20,6 +20,19 @@ public class ScheduleMapperImpl implements ScheduleService{
     this.mapper = mapper;
   }
 
+
+  @Override
+  public BaseResponse getScheduleList(HashMap<String, Object> param) throws Exception {
+
+    HashMap<String, Object> map = new HashMap<>();
+    map.put("events", mapper.getScheduleList(param));
+
+    return BaseResponse.builder()
+            .status(HttpStatus.OK)
+            .list(map)
+            .build();
+  }
+
   @Override
   public BaseResponse saveNotice(HashMap<String, Object> param) throws Exception {
 
@@ -29,13 +42,12 @@ public class ScheduleMapperImpl implements ScheduleService{
 
     // 사용자의 PK가 같이 넘어오지 않았을 때 -> error 반환
     if(param.get("author").equals("") || !param.containsKey("author")) {
+
       status = ScheduleStatus.UNAUTHORIZED.getCode();
       message = ScheduleStatus.UNAUTHORIZED.getMessage();
 
-      log.info("=========== if ===================");
     // 서비스 로직 실행
     } else {
-      log.info("=========== else ===================");
       result = Objects.nonNull(param.get("id")) ?
               mapper.insertSchedule(param) : 0 /* update */;
 

@@ -22,8 +22,22 @@ public class ScheduleController {
     this.scheduleService = scheduleService;
   }
 
+
   /**
-   * @param     : HashMap
+   * @params     : HashMap
+   * @Exception : throws Exception
+   * @return    : ResponseEntity
+   * 일정 조회
+   * */
+  @PostMapping("get")
+  public BaseResponse getSchedule(@RequestBody HashMap<String, Object> param) throws Exception{
+
+    log.info("POST : /api/admin/schedule/get : " + param.toString());
+
+    return scheduleService.getScheduleList(param);
+  }
+  /**
+   * @params     : HashMap
    * @Exception : throws Exception
    * @return    : ResponseEntity
    * 일정 등록 및 수정
@@ -35,5 +49,4 @@ public class ScheduleController {
 
     return scheduleService.saveNotice(param);
   }
-
 }

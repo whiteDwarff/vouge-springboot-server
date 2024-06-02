@@ -2,18 +2,40 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.vogue.admin.schedule.mapper.ScheduleMapper">
 
+    <select id="getScheduleList" parameterType="hashmap" resultType="hashmap">
+        SELECT
+            id,
+            title,
+            start,
+            "end",
+            color,
+            textColor as "textColor"
+        FROM schedule
+        WHERE 1 = 1 AND (
+        <if test="start != end">
+            start BETWEEN #{start} AND #{end} OR
+            "end"   BETWEEN #{start} AND #{end}
+        </if>
+        <if test="start == end">
+            #{start} BETWEEN start AND "end" OR
+            #{end}   BETWEEN start AND "end"
+        </if>
+        )
+    </select>
+
     <insert id="insertSchedule" parameterType="hashmap">
         INSERT INTO schedule (
             title,
             content,
             start,
-            end,
+            "end",
             day_start,
             day_end,
             time_start,
             time_end,
             display,
             color,
+            textColor,
             author
         ) VALUES (
             #{title},
@@ -26,6 +48,7 @@
             #{timeEnd},
             #{display},
             #{color},
+            #{textColor},
             #{author}
         )
     </insert>

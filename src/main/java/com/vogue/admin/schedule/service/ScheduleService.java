@@ -6,6 +6,9 @@ import java.util.HashMap;
 
 public interface ScheduleService {
 
+
+  BaseResponse getScheduleList(HashMap<String, Object> param) throws Exception;
+
   BaseResponse saveNotice(HashMap<String, Object> param) throws Exception;
 
 }
