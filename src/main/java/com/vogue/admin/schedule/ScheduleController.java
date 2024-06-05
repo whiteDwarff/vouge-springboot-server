@@ -27,14 +27,26 @@ public class ScheduleController {
    * @params     : HashMap
    * @Exception : throws Exception
    * @return    : ResponseEntity
-   * 일정 조회
+   * 일정 목록  조회
    * */
   @PostMapping("get")
-  public BaseResponse getSchedule(@RequestBody HashMap<String, Object> param) throws Exception{
+  public BaseResponse getScheduleList(@RequestBody HashMap<String, Object> param) throws Exception{
 
     log.info("POST : /api/admin/schedule/get : " + param.toString());
 
     return scheduleService.getScheduleList(param);
+  }/**
+   * @params     : HashMap
+   * @Exception : throws Exception
+   * @return    : ResponseEntity
+   * 일정 상세조회
+   * */
+  @PostMapping("selectOne")
+  public BaseResponse getSchedule(@RequestBody HashMap<String, Object> param) throws Exception{
+
+    log.info("POST : /api/admin/schedule/selectOne : " + param.toString());
+
+    return scheduleService.getSchedule(param);
   }
   /**
    * @params     : HashMap

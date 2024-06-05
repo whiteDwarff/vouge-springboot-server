@@ -10,5 +10,7 @@ public interface ScheduleMapper {
 
   List<HashMap<String, Object>> getScheduleList(HashMap<String, Object> param) throws Exception;
 
+  HashMap<String, Object> getSchedule(HashMap<String, Object> param) throws Exception;
+
   int insertSchedule(HashMap<String, Object> param) throws Exception;
 }

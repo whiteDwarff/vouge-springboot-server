@@ -4,12 +4,13 @@
 
     <select id="getScheduleList" parameterType="hashmap" resultType="hashmap">
         SELECT
-            id,
-            title,
-            start,
-            "end",
-            color,
-            textColor as "textColor"
+             id
+            ,title
+            ,start
+            ,"end"
+            ,color
+            ,textColor as "textColor"
+            ,display
         FROM schedule
         WHERE 1 = 1 AND (
         <if test="start != end">
@@ -21,6 +22,27 @@
             #{end}   BETWEEN start AND "end"
         </if>
         )
+    </select>
+
+    <select id="getSchedule" parameterType="hashmap" resultType="hashmap">
+        SELECT
+             s.id
+            ,s.title
+            ,s.content
+            ,s.day_start as "dayStart"
+            ,s.time_start as "timeStart"
+            ,s.start as start
+            ,s.day_end as "dayEnd"
+            ,s.time_end as "timeEnd"
+            ,s.end
+            ,s.display
+            ,s.color
+            ,s.textcolor as "textColor"
+            ,s.author
+            ,TU.NAME
+        FROM SCHEDULE S
+        JOIN TB_USER TU ON S.AUTHOR = TU.SEQ
+        WHERE S.ID = CAST(#{id} as INTEGER)
     </select>
 
     <insert id="insertSchedule" parameterType="hashmap">

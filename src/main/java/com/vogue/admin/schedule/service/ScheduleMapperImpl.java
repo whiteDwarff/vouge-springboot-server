@@ -34,6 +34,17 @@ public class ScheduleMapperImpl implements ScheduleService{
   }
 
   @Override
+  public BaseResponse getSchedule(HashMap<String, Object> param) throws Exception {
+    HashMap<String, Object> map = new HashMap<>();
+    map.put("event", mapper.getSchedule(param));
+
+    return BaseResponse.builder()
+            .status(HttpStatus.OK)
+            .list(map)
+            .build();
+  }
+
+  @Override
   public BaseResponse saveNotice(HashMap<String, Object> param) throws Exception {
 
     HttpStatus status = null;
