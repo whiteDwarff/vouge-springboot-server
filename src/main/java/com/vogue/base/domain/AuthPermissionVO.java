@@ -9,5 +9,5 @@ public class AuthPermissionVO {
   private String idntfNm;
   private String memo;
   private int sort;
-
+  private String usyn;
 }
