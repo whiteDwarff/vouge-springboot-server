@@ -5,23 +5,31 @@
     <select id="getScheduleList" parameterType="hashmap" resultType="hashmap">
         SELECT
              id
-            ,title
+            <if test="author != null and author != ''">
+                ,title
+            </if>
+            <if test="author == null or author == ''">
+                ,tu.name || ' • ' || title as title
+            </if>
             ,start
             ,"end"
             ,color
             ,textColor as "textColor"
             ,display
-        FROM schedule
-        WHERE 1 = 1 AND (
+        FROM schedule s
+        JOIN tb_user tu on s.author = tu.seq
+        WHERE 1 = 1
         <if test="start != end">
-            start BETWEEN #{start} AND #{end} OR
-            "end"   BETWEEN #{start} AND #{end}
+            and ( s.start BETWEEN #{start} AND #{end}
+               OR s.end  BETWEEN #{start} AND #{end} )
         </if>
         <if test="start == end">
-            #{start} BETWEEN start AND "end" OR
-            #{end}   BETWEEN start AND "end"
+            and ( #{start} BETWEEN s.start AND s.end
+               OR #{end}   BETWEEN s.start AND s.end )
         </if>
-        )
+        <if test="author != null and author != ''">
+            and s.author = #{author}
+        </if>
     </select>
 
     <select id="getSchedule" parameterType="hashmap" resultType="hashmap">
