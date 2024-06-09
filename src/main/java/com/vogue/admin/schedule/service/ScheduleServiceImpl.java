@@ -12,11 +12,11 @@ import java.util.Objects;
 
 @Slf4j
 @Service
-public class ScheduleMapperImpl implements ScheduleService{
+public class ScheduleServiceImpl implements ScheduleService{
 
   private final ScheduleMapper mapper;
 
-  public ScheduleMapperImpl(ScheduleMapper mapper) {
+  public ScheduleServiceImpl(ScheduleMapper mapper) {
     this.mapper = mapper;
   }
 
@@ -45,7 +45,7 @@ public class ScheduleMapperImpl implements ScheduleService{
   }
 
   @Override
-  public BaseResponse saveNotice(HashMap<String, Object> param) throws Exception {
+  public BaseResponse saveSchedule(HashMap<String, Object> param) throws Exception {
 
     HttpStatus status = null;
     String message = null;
@@ -59,18 +59,49 @@ public class ScheduleMapperImpl implements ScheduleService{
 
     // 서비스 로직 실행
     } else {
-      result = Objects.nonNull(param.get("id")) ?
-              mapper.insertSchedule(param) : 0 /* update */;
+      result = param.get("id").equals("") ?
+              mapper.insertSchedule(param) : mapper.updateSchedule(param);
 
       // 등록 및 수정 성공
       if(result > 0) {
-        status = ScheduleStatus.OK.getCode();
-        message = ScheduleStatus.OK.getMessage();
+        status = ScheduleStatus.CREATED.getCode();
+        message = ScheduleStatus.CREATED.getMessage();
       // 실패
       } else {
         status = ScheduleStatus.UNAUTHORIZED.getCode();
         message = ScheduleStatus.UNAUTHORIZED.getMessage();
       }
+    }
+
+    return BaseResponse.builder()
+            .status(status)
+            .message(message)
+            .build();
+  }
+
+  @Override
+  public BaseResponse deleteSchedule(HashMap<String, Object> param) throws Exception {
+
+    HttpStatus status = null;
+    String message = null;
+    int result = 0;
+
+    try {
+      if(!param.get("id").equals("")) {
+
+        result = mapper.deleteSchedule(param);
+
+        if(result > 0) {
+          status = ScheduleStatus.OK.getCode();
+          message = ScheduleStatus.OK.getMessage();
+        }
+      } else {
+        status = ScheduleStatus.BAD_REQUEST.getCode();
+        message = ScheduleStatus.BAD_REQUEST.getMessage();
+      }
+    } catch (Exception e) {
+      status = ScheduleStatus.INTERNAL_SERVER_ERROR_DEL.getCode();
+      message = ScheduleStatus.INTERNAL_SERVER_ERROR_DEL.getMessage();
     }
 
     return BaseResponse.builder()

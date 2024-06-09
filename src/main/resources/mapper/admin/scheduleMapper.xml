@@ -47,6 +47,8 @@
             ,s.color
             ,s.textcolor as "textColor"
             ,s.author
+            ,TO_CHAR(s.created_at , 'yyyy-mm-dd') created_at
+            ,TO_CHAR(s.updated_at , 'yyyy-mm-dd') updated_at
             ,TU.NAME
         FROM SCHEDULE S
         JOIN TB_USER TU ON S.AUTHOR = TU.SEQ
@@ -82,5 +84,28 @@
             #{author}
         )
     </insert>
+
+    <update id="updateSchedule" parameterType="hashmap">
+        UPDATE schedule SET
+            title = #{title},
+            content = #{content},
+            start = #{start},
+            "end" = #{end},
+            day_start = #{dayStart},
+            day_end = #{dayEnd},
+            time_start = #{timeStart},
+            time_end = #{timeEnd},
+            display = #{display},
+            color = #{color},
+            textColor = #{textColor},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE 1 = 1
+            AND id = #{id}
+    </update>
+
+    <delete id="deleteSchedule" parameterType="hashmap">
+        DELETE FROM schedule
+        WHERE id = #{id}
+    </delete>
 
 </mapper>

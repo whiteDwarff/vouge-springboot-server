@@ -13,4 +13,8 @@ public interface ScheduleMapper {
   HashMap<String, Object> getSchedule(HashMap<String, Object> param) throws Exception;
 
   int insertSchedule(HashMap<String, Object> param) throws Exception;
+
+  int updateSchedule(HashMap<String, Object> param) throws Exception;
+
+  int deleteSchedule(HashMap<String, Object> param) throws Exception;
 }

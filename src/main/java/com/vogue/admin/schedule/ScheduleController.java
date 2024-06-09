@@ -55,10 +55,23 @@ public class ScheduleController {
    * 일정 등록 및 수정
    * */
   @PostMapping("save")
-  public BaseResponse insertSchedule(@RequestBody HashMap<String, Object> param) throws Exception{
+  public BaseResponse saveSchedule(@RequestBody HashMap<String, Object> param) throws Exception{
 
     log.info("POST : /api/admin/schedule/save : " + param.toString());
 
-    return scheduleService.saveNotice(param);
+    return scheduleService.saveSchedule(param);
+  }
+  /**
+   * @params     : HashMap
+   * @Exception : throws Exception
+   * @return    : ResponseEntity
+   * 일정 등록 및 수정
+   * */
+  @PostMapping("delete")
+  public BaseResponse deleteSchedule(@RequestBody HashMap<String, Object> param) throws Exception{
+
+    log.info("POST : /api/admin/schedule/delete : " + param.toString());
+
+    return scheduleService.deleteSchedule(param);
   }
 }

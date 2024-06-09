@@ -11,6 +11,7 @@ public interface ScheduleService {
 
   BaseResponse getSchedule(HashMap<String, Object> param) throws Exception;
 
-  BaseResponse saveNotice(HashMap<String, Object> param) throws Exception;
+  BaseResponse saveSchedule(HashMap<String, Object> param) throws Exception;
 
+  BaseResponse deleteSchedule(HashMap<String, Object> param) throws Exception;
 }
