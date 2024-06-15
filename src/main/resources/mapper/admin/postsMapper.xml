@@ -25,6 +25,7 @@
             #{useYn}
         )
     </insert>
+
     <update id="updateNotice" parameterType="hashmap">
         /*  공지사항, 템플릿 수정 */
         update notice set
@@ -37,6 +38,16 @@
             updated_at = now()
         where seq = #{seq}
     </update>
+
+    <update id="updateNoticeUseYn" parameterType="hashmap">
+        /*  공지사항 >  템플릿 수정 시 UPPER_SEQ, LOWER_SEQ와 일치하는 모든 공지사항 USE_YN 변경 */
+        UPDATE NOTICE SET
+            USE_YN = 'N'
+        WHERE UPPER_SEQ  = #{upperSeq}
+        and LOWER_SEQ = #{lowerSeq}
+    </update>
+
+
 
     <insert id="insertPrepend" parameterType="hashmap">
         /* 말머리 등록 */
@@ -59,7 +70,7 @@
 
     <select id="selectOnePrepend" parameterType="Long" resultType="String">
         /*  게시글에 맞는 말머리 리스트 검색 */
-        select prepend from prepend where upperSeq = #{seq}
+        select prepend, upperSeq from prepend where upperSeq = #{seq}
     </select>
 
     <select id="selectNoticeCount" parameterType="hashmap" resultType="int">

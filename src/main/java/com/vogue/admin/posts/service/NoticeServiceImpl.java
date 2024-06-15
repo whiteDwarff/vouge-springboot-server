@@ -7,6 +7,7 @@ import com.vogue.common.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,14 +25,17 @@ public class NoticeServiceImpl implements NoticeService {
   }
 
   @Override
+  @Transactional
   public BaseResponse saveNotice(HashMap<String, Object> param) throws Exception {
 
     int result = 0;
+    // 1. upper_seq와 lowser_seq에 일치하는 모든 공지사항 미사용으로 변경
+    noticeMapper.updateNoticeUseYn(param);
 
-    // 등록, form의 기본값에 seq가 없다.
+    // 2. 등록 - form의 기본값에 seq가 없다.
     if(!Objects.nonNull(param.get("seq"))) {
       result = noticeMapper.insertNotice(param);
-    // 수정, tablerow 클릭 시 form의 value엔 seq가 셋팅된다.
+    // 2. 수정 -  tablerow 클릭 시 form의 value엔 seq가 셋팅된다.
     } else {
       result = noticeMapper.updateNotice(param);
       // 말머리 삭제 후 재등록

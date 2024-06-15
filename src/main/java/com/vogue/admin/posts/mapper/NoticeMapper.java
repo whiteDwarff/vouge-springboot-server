@@ -25,4 +25,8 @@ public interface NoticeMapper {
   HashMap<String, Object> selectOneNotice(Long seq) throws Exception;
 
   int deleteNotice(HashMap<String, Object> param) throws Exception;
+
+  void updateNoticeUseYn(HashMap<String, Object> param) throws Exception;
+
+
 }

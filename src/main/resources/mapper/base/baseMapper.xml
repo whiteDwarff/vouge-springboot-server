@@ -39,8 +39,8 @@
 
     <select id="getTreeMenu" resultType="hashmap">
         select
-        case when b.name is null then a.name
-        else concat(b.name, ' > ', a.name)
+            case when b.name is null then a.name
+            else concat(b.name, ' > ', a.name)
         end label,
         a.seq value,
         a.depth
@@ -48,6 +48,23 @@
         left join base_category b on a.upper_seq = b.seq
         where a.depth <![CDATA[<]]> 2
         order by a.sort asc
+    </select>
+
+    <select id="getTemplateBySeq" resultType="hashmap" parameterType="hashmap">
+        /* 하위 카테고리와 일치한 게시판 템플릿 검색, baseMapper_SQL.getTemplateByLowerSeq */
+        SELECT
+              SEQ
+            , COALESCE(TEMPLATE, '') TEMPLATE
+        FROM NOTICE
+        where LOWER_SEQ = #{seq}
+        AND USE_YN = 'Y';
+    </select>
+
+    <select id="getPrependBySeq" resultType="String" parameterType="hashmap">
+        /* 하위 카테고리와 일치한 말머리 검색, baseMapper_SQL.getPrependBySeq */
+        SELECT PREPEND
+        FROM PREPEND
+        WHERE upperSeq = #{seq}
     </select>
 
     <select id="getAuthPermission" resultType="com.vogue.base.domain.AuthPermissionVO">
