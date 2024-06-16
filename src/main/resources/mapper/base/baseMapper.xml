@@ -54,6 +54,7 @@
         /* 하위 카테고리와 일치한 게시판 템플릿 검색, baseMapper_SQL.getTemplateByLowerSeq */
         SELECT
               SEQ
+            , COALESCE(NOTICE, '') NOTICE
             , COALESCE(TEMPLATE, '') TEMPLATE
         FROM NOTICE
         where LOWER_SEQ = #{seq}

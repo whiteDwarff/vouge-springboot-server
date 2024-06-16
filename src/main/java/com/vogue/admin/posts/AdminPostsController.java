@@ -12,11 +12,11 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/api/admin/posts/*")
 @RestController
-public class PostsController{
+public class AdminPostsController{
 
   private final NoticeService noticeService;
 
-  public PostsController(NoticeService noticeService) {
+  public AdminPostsController(NoticeService noticeService) {
     this.noticeService = noticeService;
   }
 

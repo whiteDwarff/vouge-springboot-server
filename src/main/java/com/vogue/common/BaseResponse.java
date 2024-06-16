@@ -1,18 +1,16 @@
 package com.vogue.common;
 
+import com.vogue.base.domain.BaseCode;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.HashMap;
 
 @Getter
 @ToString
 public class BaseResponse {
-
- // private ResponseEntity<?> response;
 
   private final HttpStatus status;
 
@@ -41,8 +39,10 @@ public class BaseResponse {
     this.list = list;
   }
 
-//  public ResponseEntity<?> getResponse() {
-//    response = ResponseEntity.status(status).body(list);
-//    return response;
-//  }
+  @Builder(builderClassName = "BaseCodeBuilder", builderMethodName = "BaseCodeBuilder")
+  public BaseResponse(BaseCode code, HashMap<String, Object> list) {
+    this.status = code.getStatus();
+    this.message = code.getMessage();
+    this.list = list;
+  }
 }

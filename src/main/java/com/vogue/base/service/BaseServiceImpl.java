@@ -68,16 +68,17 @@ public class BaseServiceImpl implements BaseService {
           JSONObject jsonObj = (JSONObject) obj;
           // obj의 upperSeq와 vo의 seq를 비교하여 하위 카테고리 확인, 게시판 여부를 확인하여 데이터 셋팅
           if ((long) jsonObj.get("upperSeq") == vo.getSeq() && ((JSONObject) obj).get("postYn").equals("Y")) {
-            log.info("############ OBJ : " + obj.toString());
 
             JSONObject category = new JSONObject();
             // 하위 카테고리로 등록된 게시판 템플릿 걸색
             HashMap<String, String> template = baseMapper.getTemplateBySeq(obj);
             // 등록된 템플릿이 있다면
             if(template != null) {
+              category.put("notice", emptyCheckByTemplate(template.get("notice")));
               category.put("template", emptyCheckByTemplate(template.get("template")));
               category.put("prepend", baseMapper.getPrependBySeq(template));
             } else {
+              category.put("notice", "");
               category.put("template", "");
               category.put("prepend", new Array[0]);
             }
