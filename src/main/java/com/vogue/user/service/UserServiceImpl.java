@@ -11,6 +11,7 @@ import com.vogue.user.domain.UserVO;
 import com.vogue.user.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -36,30 +37,31 @@ public class UserServiceImpl implements UserService{
 
   @Override
   public BaseResponse  signInUser(SignInVO signIn) {
-    UserVO user = null;
 
-    BaseCode code = BaseCode.LOGIN_OK;
+    HashMap<String, Object> user = null;
+    HttpStatus status = null;
 
     int result = mapper.findByEmail(signIn);
-
-    // 가입한 이메일이 있는 경우
     if(result > 0) {
-      user = mapper.signInUser(signIn);
-      Boolean captcha = captchaService.verifyToken(signIn.getToken());
+      try {
+        // 가입한 이메일이 있는 경우
+        if(result > 0) {
+          user = mapper.signInUser(signIn);
+          Boolean captcha = captchaService.verifyToken(signIn.getToken());
+          // 비밀번호가 일치하지 않은 경우
+          if (!Objects.nonNull(user))  status = HttpStatus.UNAUTHORIZED;
 
-      // 아이디와 비밀번호가 모두 일치한 경우
-      if (Objects.nonNull(user)) {
-          user.setPassword(null);
+          // google ReCaptcha 검증에 실패한 경우
+          if (!captcha) status = HttpStatus.FORBIDDEN;
+        }
+      } catch (Exception e) {
+        status = HttpStatus.NOT_FOUND;
+        e.printStackTrace();
       }
-      // 비밀번호가 일치하지 않은 경우
-      else
-        code = BaseCode.UNAUTHORIZED_PWD;
-      // google ReCaptcha 검증에 실패한 경우
-      if (!captcha)
-        code = BaseCode.UNAUTHORIZED_TOKEN;
     }
-    return BaseResponse.<UserVO>BaseCodeBuilder()
-            .code(code)
+
+    return BaseResponse.BaseCodeBuilder()
+            .status(status)
             .result(user)
             .build();
   }

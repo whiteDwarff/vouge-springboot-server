@@ -92,34 +92,35 @@
         order by a.sort asc
     </select>
 
-    <!-- seq 값을 가진 카테고리의 상세항목 조회 -->
-    <select id="selectOneCategory" parameterType="int"  resultType="com.vogue.base.domain.CategoryVO">
-        select
-            seq,
-            name,
-            url,
-            sort,
-            post_yn "postYn",
-            use_yn "useYn",
-            depth,
-            upper_seq "upperSeq"
-        from base_category where seq = #{seq}
+    <select id="selectOneCategory" parameterType="hashmap"  resultType="hashmap">
+        /* seq 값을 가진 카테고리의 상세항목 조회, CategoryMapper_SQL.selectOneCategory */
+        SELECT SEQ
+             , NAME
+             , URL
+             , SORT
+             , POST_YN     AS "postYn"
+             , USE_YN      AS "useYn"
+             , DEPTH
+             , UPPER_SEQ   AS "upperSeq"
+        FROM BASE_CATEGORY
+        WHERE SEQ          = #{seq}
     </select>
 
     <!-- upper_seq 값을 가진 권한의 상세항목 조회 -->
-    <select id="selectOneCategoryPermission" parameterType="int"  resultType="com.vogue.admin.category.domain.CategoryPermissionVO">
-        select
-            bpg.seq,
-            bpg.idntf_cd,
-            bpg.access,
-            bpg.add,
-            bpg.update,
-            bpg.delete,
-            bp.idntf_nm
-        from base_permission_group bpg
-        join base_permission bp on bp.idntf_cd = bpg.idntf_cd
-        where category_seq = #{seq}
-        order by sort asc
+    <select id="selectOneCategoryPermission" parameterType="hashmap"  resultType="hashMap">
+        /* upper_seq 값을 가진 권한의 상세항목 조회, CategoryMapper_SQL.selectOneCategoryPermission */
+        SELECT A.SEQ
+             , A.IDNTF_CD   AS "idntfCd"
+             , B.IDNTF_NM   AS "idntfNm"
+             , A.ACCESS
+             , A.ADD
+             , A.UPDATE
+             , A.DELETE
+        FROM BASE_PERMISSION_GROUP A
+        JOIN BASE_PERMISSION B
+            ON B.IDNTF_CD   = A.IDNTF_CD
+        WHERE CATEGORY_SEQ  = #{seq}
+        ORDER BY SORT ASc
     </select>
 
     <!-- 카테고리 정보 수정 -->

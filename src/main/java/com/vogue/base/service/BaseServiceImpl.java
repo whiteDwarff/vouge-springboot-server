@@ -1,6 +1,7 @@
 package com.vogue.base.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.vogue.base.domain.BaseCode;
 import com.vogue.base.domain.CategoryVO;
 import com.vogue.base.mapper.BaseMapper;
 import com.vogue.common.BaseResponse;
@@ -37,11 +38,11 @@ public class BaseServiceImpl implements BaseService {
 
   @Override
   public BaseResponse getSystemMenu(HashMap<String, Object> param) throws Exception {
-
     List<HashMap<String, Object>> categoryAll = baseMapper.getAsideMenu(param);
 
     HashMap<String, Object> menuMap = new HashMap<>();
-    HttpStatus status = HttpStatus.OK;
+    HttpStatus status = null;
+    BaseCode code = BaseCode.getOK("조회");
     try {
       menuMap.put("parent", new JSONArray());
       menuMap.put("children", new JSONArray());
@@ -53,7 +54,7 @@ public class BaseServiceImpl implements BaseService {
       status = HttpStatus.BAD_REQUEST;
     }
 
-    return BaseResponse.builder()
+    return BaseResponse.BaseCodeBuilder()
             .status(status)
             .result(menuMap)
             .build();

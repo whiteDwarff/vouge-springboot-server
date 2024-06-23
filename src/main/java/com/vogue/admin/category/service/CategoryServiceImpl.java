@@ -5,10 +5,12 @@ import com.vogue.admin.category.domain.CategoryPermissionVO;
 import com.vogue.admin.category.mapper.CategoryMapper;
 import com.vogue.base.domain.CategoryVO;
 import com.vogue.code.CategoryStatus;
+import com.vogue.common.BaseResponse;
 import com.vogue.common.CmmnResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -47,18 +49,20 @@ public class CategoryServiceImpl implements CategoryService {
 
     return response;
   }
-
+  /**
+   * PK를 통해 카테고리 정보 검색
+   * params HashMap
+   * return BaseResponse
+   * */
   @Override
-  public CmmnResponse selectCategoryInfo(int seq) throws Exception {
+  public BaseResponse selectCategoryInfo(HashMap<String, Object> param) throws Exception {
 
-    CmmnResponse response = new CmmnResponse();
+    HashMap<String, Object> category = categoryMapper.selectOneCategory(param);
+    category.put("permission", categoryMapper.selectOneCategoryPermission(param));
 
-    CategoryVO category = categoryMapper.selectOneCategory(seq);
-    category.setPermission(categoryMapper.selectOneCategoryPermission(seq));
-
-    response.put("form", category);
-
-    return response;
+    return BaseResponse.BaseCodeBuilder()
+              .result(category)
+              .build();
   }
 
   @Override

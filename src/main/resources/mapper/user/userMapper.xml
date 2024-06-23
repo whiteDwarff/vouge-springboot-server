@@ -38,19 +38,19 @@
         WHERE email = #{email}
     </select>
 
-    <select id="signInUser" parameterType="com.vogue.user.domain.SignInVO" resultType="com.vogue.user.domain.UserVO">
+    <select id="signInUser" parameterType="com.vogue.user.domain.SignInVO" resultType="hashmap">
         /* 로그인, userMapper_SQL.signInUser */
         SELECT
             TU.SEQ
             , TU.EMAIL
-            , TU.password
+            , TU.PASSWORD
             , TU.NAME
             , TU.NICKNAME
             , TU.TEL
-            , TU.PHOTO_URL
-            , TU.IDNTF_CD
-            , TO_CHAR(TU.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT
-            , BP.IDNTF_NM
+            , TU.PHOTO_URL                         AS "photoUrl"
+            , TU.IDNTF_CD                          AS "idntfCd"
+            , TO_CHAR(TU.CREATED_AT, 'YYYY-MM-DD') AS "createdAt"
+            , BP.IDNTF_NM                          AS "idntfNm"
         FROM TB_USER TU
         JOIN BASE_PERMISSION BP
         ON TU.IDNTF_CD      = BP.IDNTF_CD

@@ -4,6 +4,7 @@ package com.vogue.posts.service;
 import com.vogue.base.domain.BaseCode;
 import com.vogue.common.BaseResponse;
 import com.vogue.posts.mapper.PostsMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -25,25 +26,23 @@ public class PostsServiceImpl implements PostsService{
   @Override
   public BaseResponse savePosts(HashMap<String, Object> param) throws Exception {
 
-    String seq = (String) param.get("seq"), str = "등록";
-    boolean isSaveState = true;
+    String seq = (String) param.get("seq");
+    HttpStatus status = null;
 
-    // 게시글 등록
-    if(Objects.nonNull(seq)) {
-      try {
+    try {
+      // 게시글 등록
+      if(Objects.nonNull(seq)) {
         postsMapper.insertPosts(param);
-      } catch (Exception e) {
-        e.printStackTrace();
-        isSaveState = false;
+      } else {
+
       }
-    // 게시글 수정
-    } else {
-      str = "수정";
+    } catch (Exception e) {
+      status = HttpStatus.BAD_REQUEST;
     }
-    BaseCode code = isSaveState ? BaseCode.getOK(str) : BaseCode.getERROR(str);
+
 
     return BaseResponse.BaseCodeBuilder()
-              .code(code)
+              .status(status)
               .result(param)
               .build();
   }

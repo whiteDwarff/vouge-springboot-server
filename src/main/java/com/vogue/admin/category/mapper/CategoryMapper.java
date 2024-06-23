@@ -22,9 +22,9 @@ public interface CategoryMapper {
 
   List<HashMap<String, Object>> getSelectOption() throws Exception;
 
-  CategoryVO selectOneCategory(int seq) throws Exception;
+  HashMap<String, Object> selectOneCategory(HashMap<String, Object> param) throws Exception;
 
-  List<CategoryPermissionVO> selectOneCategoryPermission(int seq) throws Exception;
+  List<HashMap<String, Object>> selectOneCategoryPermission(HashMap<String, Object> param) throws Exception;
 
   int updateCategory(CategoryVO vo) throws Exception;
 

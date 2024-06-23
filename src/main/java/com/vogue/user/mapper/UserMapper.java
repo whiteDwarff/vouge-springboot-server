@@ -6,6 +6,8 @@ import com.vogue.user.domain.SignUpVO;
 import com.vogue.user.domain.UserVO;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.HashMap;
+
 @Mapper
 public interface UserMapper {
 
@@ -13,7 +15,7 @@ public interface UserMapper {
   int duplicateUser(SignUpVO vo);
   void signUpUser(SignUpVO vo);
   int findByEmail(SignInVO vo);
-  UserVO signInUser(SignInVO vo);
+  HashMap<String, Object> signInUser(SignInVO vo);
   String getEmail(SignUpVO vo);
   int getEmailCount(EmailVO vo);
   void issuanceTmpryPwd(EmailVO vo);
