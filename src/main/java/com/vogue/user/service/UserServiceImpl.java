@@ -1,5 +1,7 @@
 package com.vogue.user.service;
 
+import com.vogue.base.domain.BaseCode;
+import com.vogue.common.BaseResponse;
 import com.vogue.common.CmmnResponse;
 import com.vogue.user.domain.EmailVO;
 import com.vogue.user.domain.SignInVO;
@@ -33,35 +35,33 @@ public class UserServiceImpl implements UserService{
   }
 
   @Override
-  public CmmnResponse signInUser(SignInVO signIn) {
+  public BaseResponse  signInUser(SignInVO signIn) {
+    UserVO user = null;
 
-    CmmnResponse response = new CmmnResponse();
+    BaseCode code = BaseCode.LOGIN_OK;
 
     int result = mapper.findByEmail(signIn);
-    String message = UserStatus.UNAUTHORIZED_EMAIL.getMessage();
 
     // 가입한 이메일이 있는 경우
     if(result > 0) {
-      UserVO user = mapper.signInUser(signIn);
+      user = mapper.signInUser(signIn);
       Boolean captcha = captchaService.verifyToken(signIn.getToken());
 
       // 아이디와 비밀번호가 모두 일치한 경우
       if (Objects.nonNull(user)) {
-          message = UserStatus.LOGIN_OK.getMessage();
           user.setPassword(null);
-          response.put("user", user);
       }
       // 비밀번호가 일치하지 않은 경우
       else
-        message = UserStatus.UNAUTHORIZED_PWD.getMessage();
+        code = BaseCode.UNAUTHORIZED_PWD;
       // google ReCaptcha 검증에 실패한 경우
       if (!captcha)
-        message = UserStatus.UNAUTHORIZED_TOKEN.getMessage();
+        code = BaseCode.UNAUTHORIZED_TOKEN;
     }
-    response.setMessage(message);
-
-    
-    return response;
+    return BaseResponse.<UserVO>BaseCodeBuilder()
+            .code(code)
+            .result(user)
+            .build();
   }
 
   @Override

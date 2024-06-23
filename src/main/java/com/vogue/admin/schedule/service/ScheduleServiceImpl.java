@@ -29,7 +29,7 @@ public class ScheduleServiceImpl implements ScheduleService{
 
     return BaseResponse.builder()
             .status(HttpStatus.OK)
-            .list(map)
+            .result(map)
             .build();
   }
 
@@ -40,7 +40,7 @@ public class ScheduleServiceImpl implements ScheduleService{
 
     return BaseResponse.builder()
             .status(HttpStatus.OK)
-            .list(map)
+            .result(map)
             .build();
   }
 

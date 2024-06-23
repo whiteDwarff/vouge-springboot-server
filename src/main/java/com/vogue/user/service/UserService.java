@@ -1,10 +1,12 @@
 package com.vogue.user.service;
 
 
+import com.vogue.common.BaseResponse;
 import com.vogue.common.CmmnResponse;
 import com.vogue.user.domain.EmailVO;
 import com.vogue.user.domain.SignInVO;
 import com.vogue.user.domain.SignUpVO;
+import com.vogue.user.domain.UserVO;
 
 public interface UserService {
 
@@ -12,7 +14,7 @@ public interface UserService {
 
   CmmnResponse signUpUser(SignUpVO vo);
 
-  CmmnResponse signInUser(SignInVO vo);
+  BaseResponse signInUser(SignInVO vo);
 
   CmmnResponse findByEmail(SignUpVO vo);
 

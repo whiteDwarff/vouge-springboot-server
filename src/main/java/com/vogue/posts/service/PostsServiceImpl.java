@@ -44,7 +44,7 @@ public class PostsServiceImpl implements PostsService{
 
     return BaseResponse.BaseCodeBuilder()
               .code(code)
-              .list(param)
+              .result(param)
               .build();
   }
   /**
@@ -55,7 +55,7 @@ public class PostsServiceImpl implements PostsService{
   @Override
   public BaseResponse selectOne(HashMap<String, Object> param) throws Exception {
     return BaseResponse.builder()
-            .list(postsMapper.selectOne(param))
+            .result(postsMapper.selectOne(param))
             .build();
   }
 }

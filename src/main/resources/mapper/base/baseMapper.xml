@@ -1,53 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.vogue.base.mapper.BaseMapper">
-    <!-- 사용자의 권한에 맞는 카테고리 반환  -->
-    <select id="getAsideMenu" parameterType="String" resultType="com.vogue.base.domain.CategoryVO">
-        select  high.seq,
-                high.name,
-                high.depth,
-                high.upper_seq,
-                high.sort,
-                high.post_yn,
-                (select coalesce(json_agg(json_build_object('seq', mid.seq,
-                                    'name', mid.name,
-                                    'depth', mid.depth,
-                                    'upperSeq', mid.upper_seq,
-                                    'sort', mid.sort,
-                                    'idntfCd', gup.idntf_cd,
-                                    'url', mid.url,
-                                    'postYn', mid.post_yn,
-                                    'categorySeq', gup.category_seq,
-                                    'access', gup.access,
-                                    'add', gup.add,
-                                    'update', gup.update,
-                                    'delete', gup.delete
-                                    ) order by mid.sort asc), '[]')
-                from base_category mid
-                join base_permission_group gup
-                on mid.seq = gup.category_seq
-                    and gup.access = 'Y'
-                    and gup.idntf_cd = #{idntfCd}
-                where depth = 2) mid_category
-        from base_category high
-        join base_permission_group gup on high.seq = gup.category_seq
-        and gup.idntf_cd = #{idntfCd}
-        and gup.access = 'Y'
-        where high.depth = 1 and high.use_yn = 'Y'
-        order by sort asc
+
+    <select id="getAsideMenu" parameterType="hashmap" resultType="hashmap">
+        /* 서비스 메뉴 검색, BaseMapper_SQL.getAsideMenu */
+        SELECT UPPER.SEQ
+             , UPPER.NAME
+             , UPPER.DEPTH
+             , UPPER.UPPER_SEQ
+             , UPPER.SORT
+             , UPPER.POST_YN                  AS "postYn"
+               -- 상위 카테고리의 PERMISSION
+             , ( SELECT COALESCE(JSON_AGG(JSON_BUILD_OBJECT(
+                        'access', GUP.ACCESS
+                        , 'add',    GUP.ADD
+                        , 'update', GUP.UPDATE
+                        , 'delete', GUP.DELETE
+                )), '[]')
+                FROM BASE_PERMISSION_GROUP GUP
+                WHERE UPPER.SEQ = GUP.CATEGORY_SEQ
+                    AND GUP.ACCESS              = 'Y'
+                    AND GUP.IDNTF_CD            = #{idntfCd}
+              ) 	AS PERMISSION
+        , ( SELECT COALESCE(JSON_AGG(JSON_BUILD_OBJECT(
+              -- 하위 카테고리의 PERMISSION
+             'permission', ( SELECT COALESCE(JSON_AGG(JSON_BUILD_OBJECT(
+                                'access',       GUP2.ACCESS
+                                , 'add', 	    GUP2.ADD
+                                , 'update',     GUP2.UPDATE
+                                , 'delete',     GUP2.DELETE
+                           )), '[]')
+                           FROM BASE_PERMISSION_GROUP GUP2
+                           WHERE LOWER.SEQ = GUP2.CATEGORY_SEQ
+                                <!--AND GUP2.ACCESS   = 'Y'-->
+                                AND GUP2.IDNTF_CD = #{idntfCd}
+                            )
+            , 'seq',		                    LOWER.SEQ
+            , 'name', 		                    LOWER.NAME
+            , 'depth', 	                        LOWER.DEPTH
+            , 'upperSeq',                       LOWER.UPPER_SEQ
+            , 'sort', 		                    LOWER.SORT
+            , 'url', 		                    LOWER.URL
+            , 'postYn', 	                    LOWER.POST_YN
+            , 'categorySeq',                    GUP.CATEGORY_SEQ
+            ) ORDER BY LOWER.SORT ASC), '[]')
+            FROM BASE_CATEGORY LOWER
+            JOIN BASE_PERMISSION_GROUP GUP
+            ON      LOWER.SEQ 		 	        = GUP.CATEGORY_SEQ
+              <!--  AND GUP.ACCESS 	                = 'Y'-->
+                AND GUP.IDNTF_CD 	            = 'ROLE_USER'
+            WHERE LOWER.DEPTH 		            = 2
+            )                                   AS "midCategory"
+        FROM BASE_CATEGORY UPPER
+        JOIN BASE_PERMISSION_GROUP GUP
+            ON UPPER.SEQ = GUP.CATEGORY_SEQ
+                AND GUP.IDNTF_CD 	            = #{idntfCd}
+                AND GUP.ACCESS 		            = 'Y'
+        WHERE UPPER.DEPTH 			            = 1
+        AND UPPER.USE_YN 			            = 'Y'
+        ORDER BY UPPER.SORT ASC;
     </select>
 
     <select id="getTreeMenu" resultType="hashmap">
-        select
-            case when b.name is null then a.name
-            else concat(b.name, ' > ', a.name)
-        end label,
-        a.seq value,
-        a.depth
-        from base_category a
-        left join base_category b on a.upper_seq = b.seq
-        where a.depth <![CDATA[<]]> 2
-        order by a.sort asc
+        /* 트리 목록 리스트 반환, BaseMapper_SQL.getTreeMenu */
+        SELECT
+              CASE WHEN B.NAME IS NULL THEN A.NAME
+                    ELSE CONCAT(B.NAME, ' > ', A.NAME)
+                END   AS LABEL
+            , A.SEQ   AS VALUE
+            , A.DEPTH
+        FROM BASE_CATEGORY A
+        LEFT JOIN BASE_CATEGORY B
+            ON A.UPPER_SEQ = B.SEQ
+        WHERE A.DEPTH <![CDATA[<]]> 2
+        ORDER BY A.SORT ASC
     </select>
 
     <select id="getTemplateBySeq" resultType="hashmap" parameterType="hashmap">
@@ -69,7 +95,9 @@
     </select>
 
     <select id="getAuthPermission" resultType="com.vogue.base.domain.AuthPermissionVO">
-        select * from base_permission
-        order by sort asc
+        /* 모든 권한 검색, baseMapper_SQL.getAuthPermission */
+        SELECT * FROM BASE_PERMISSION
+        ORDER BY SORT ASC
     </select>
+
 </mapper>

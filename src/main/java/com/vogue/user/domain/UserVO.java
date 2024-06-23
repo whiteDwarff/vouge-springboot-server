@@ -20,6 +20,6 @@ public class UserVO {
   private String tel;
   private String photoURL;
   private String idntfCd;
-  private Date createdAt;
-
+  private String idntfNm;
+  private String createdAt;
 }

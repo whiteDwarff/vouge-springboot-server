@@ -77,7 +77,7 @@ public class NoticeServiceImpl implements NoticeService {
 
     return BaseResponse.builder()
             .status(HttpStatus.OK)
-            .list(map)
+            .result(map)
             .build();
   }
 
@@ -107,7 +107,7 @@ public class NoticeServiceImpl implements NoticeService {
 
     return BaseResponse.builder()
             .status(status)
-            .list(map)
+            .result(map)
             .build();
   }
 

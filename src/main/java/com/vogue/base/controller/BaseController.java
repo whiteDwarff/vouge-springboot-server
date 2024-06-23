@@ -1,11 +1,11 @@
 package com.vogue.base.controller;
 
 import com.vogue.base.service.BaseService;
-import com.vogue.common.CmmnResponse;
-import com.vogue.user.domain.UserVO;
+import com.vogue.common.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 @Slf4j
 @RestController
@@ -18,13 +18,11 @@ public class BaseController {
     this.baseService = baseService;
   }
 
-  @GetMapping("get")
-  public ResponseEntity<?> getMenuList(@RequestParam("idntfCd") String idntfCd) throws Exception{
+  @PostMapping("get")
+  public BaseResponse getSystemMenu(@RequestBody HashMap<String, Object> param) throws Exception{
 
-    log.info("api/system/getSystemAll : " + idntfCd);
+    log.info("POST : api/system/getSystemMenu : " + param.toString());
 
-    CmmnResponse response = baseService.getSystemMenu(idntfCd);
-    return ResponseEntity.ok().body(response);
+    return baseService.getSystemMenu(param);
   }
-
 }

@@ -29,5 +29,4 @@ public class CategoryPermissionVO {
     this.update = update;
     this.delete = delete;
   }
-
 }

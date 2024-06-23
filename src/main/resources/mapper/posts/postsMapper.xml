@@ -32,21 +32,22 @@
     </insert>
 
     <select id="selectOne" parameterType="hashmap" resultType="hashmap">
+        /* 게시글 상세 검색 , PostMapper_SQL.selectOne*/
         SELECT
-                P.SEQ 							 postSeq
-              , BC.SEQ							 categorySeq
-              , TU.SEQ 							 authorSeq
+                P.SEQ 							 "postSeq"
+              , BC.SEQ							 "categorySeq"
+              , TU.SEQ 							 "authorSeq"
               , CASE WHEN P.PREPEND != '' THEN  '[ ' || P.PREPEND || ' ]' || P.TITLE
                     ELSE P.TITLE
-                END 							 title
+                END 							 "title"
              , P.CONTENT
-             , TU.NAME 							 authorNm
-             , BC.NAME 							 cateogyNm
-             , BP.IDNTF_NM
+             , TU.NICKNAME
+             , BC.NAME 							 "categoryNm"
+             , BP.IDNTF_NM                       "idntfNm"
              , TU.PHOTO_URL
-             , P.READCOUNT
-             , P.LIKECOUNT
-             , TO_CHAR(P.CREATEDAT, 'YYYY-MM-DD') createdAt
+             , P.READCOUNT                       "readCount"
+             , P.LIKECOUNT                       "likeCount"
+             , TO_CHAR(P.CREATEDAT, 'YYYY-MM-DD') "createdAt"
         FROM POSTS P
         JOIN TB_USER TU
             ON P.AUTHOR  = TU.SEQ
@@ -54,8 +55,8 @@
             ON TU.IDNTF_CD = BP.IDNTF_CD
         JOIN BASE_CATEGORY BC
             ON P.LOWERSEQ = BC.SEQ
-        WHERE CAST(P.SEQ AS VARCHAR)        = #{posts}
-            AND CAST(P.LOWERSEQ AS VARCHAR) = #{category}
+        WHERE CAST(P.SEQ AS VARCHAR)            = #{posts}
+            AND CAST(P.LOWERSEQ AS VARCHAR)     = #{category}
     </select>
 
 </mapper>

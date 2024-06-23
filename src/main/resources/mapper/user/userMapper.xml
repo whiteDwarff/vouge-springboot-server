@@ -39,11 +39,23 @@
     </select>
 
     <select id="signInUser" parameterType="com.vogue.user.domain.SignInVO" resultType="com.vogue.user.domain.UserVO">
+        /* 로그인, userMapper_SQL.signInUser */
         SELECT
-            *
-        FROM tb_user
-        WHERE email = #{email}
-            AND password = #{password}
+            TU.SEQ
+            , TU.EMAIL
+            , TU.password
+            , TU.NAME
+            , TU.NICKNAME
+            , TU.TEL
+            , TU.PHOTO_URL
+            , TU.IDNTF_CD
+            , TO_CHAR(TU.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT
+            , BP.IDNTF_NM
+        FROM TB_USER TU
+        JOIN BASE_PERMISSION BP
+        ON TU.IDNTF_CD      = BP.IDNTF_CD
+        WHERE TU.EMAIL      = #{email}
+            AND TU.password = #{password}
     </select>
 
     <!-- 이메일 찾기 -->

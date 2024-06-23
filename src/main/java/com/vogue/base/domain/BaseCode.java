@@ -6,6 +6,14 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum BaseCode {
 
+  LOGIN_OK(HttpStatus.OK, "로그인에 성공하였습니다."),
+
+  UNAUTHORIZED_EMAIL(HttpStatus.UNAUTHORIZED, "가입된 정보가 존재하지 않습니다."),
+
+  UNAUTHORIZED_PWD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
+
+  UNAUTHORIZED_TOKEN(HttpStatus.UNAUTHORIZED, "Google Captcha 검증에 실패했습니다. 다시 시도해주세요."),
+
   OK(HttpStatus.OK, "에 성공하였습니다."),
 
   INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "에 실패하였습니다")

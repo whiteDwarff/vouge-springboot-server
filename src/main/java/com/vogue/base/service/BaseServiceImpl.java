@@ -3,17 +3,21 @@ package com.vogue.base.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vogue.base.domain.CategoryVO;
 import com.vogue.base.mapper.BaseMapper;
+import com.vogue.common.BaseResponse;
 import com.vogue.common.CmmnResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.MapUtils;
 
 import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -25,89 +29,151 @@ public class BaseServiceImpl implements BaseService {
     this.baseMapper = baseMapper;
   }
 
+  /**
+   * 사용자의 권한에 맞는 메뉴 리스트 반환
+   * @params param
+   * @return BaseResponse
+   * */
 
   @Override
-  public CmmnResponse getSystemMenu(String idntfCd) throws Exception {
+  public BaseResponse getSystemMenu(HashMap<String, Object> param) throws Exception {
 
-    CmmnResponse response = new CmmnResponse();
+    List<HashMap<String, Object>> categoryAll = baseMapper.getAsideMenu(param);
 
-    List<CategoryVO> categoryAll = baseMapper.getAsideMenu(idntfCd);
-
+    HashMap<String, Object> menuMap = new HashMap<>();
+    HttpStatus status = HttpStatus.OK;
     try {
-      // 상위 카테고리, depth : 1
-      JSONArray upperCategory = new JSONArray();
+      menuMap.put("parent", new JSONArray());
+      menuMap.put("children", new JSONArray());
+      menuMap.put("permission", baseMapper.getAuthPermission());
+      menuMap.put("tree", baseMapper.getTreeMenu());
+      setUpperMenuList(menuMap, categoryAll);
+    } catch (Exception e) {
+      e.printStackTrace();
+      status = HttpStatus.BAD_REQUEST;
+    }
 
-      // 하위 카테고리, depth : 2
-      JSONArray subCategory = new JSONArray();
+    return BaseResponse.builder()
+            .status(status)
+            .result(menuMap)
+            .build();
+  }
+  /**
+   * 상위 카테고리 추가
+   * @params  HashMap, List
+   * @return  void
+   * */
+  public void setUpperMenuList(HashMap<String, Object> menuMap, List<HashMap<String, Object>> categoryAll) throws ParseException {
+    JSONArray category = new JSONArray();
+    HashMap<String, Object> menu = new HashMap<>();
 
-      // -----------------------------------------------------------
-      // depth가 1인 카테고리 목록 셋팅 ( parent )
-      // -----------------------------------------------------------
-      for(CategoryVO vo : categoryAll) {
-        // 관리자가 메뉴가 아닌 게시판 사용여부가 Y인 메뉴만 저장
-        if(vo.getPostYn().equals("Y")) {
-          JSONObject obj1 = new JSONObject();
-          obj1.put("label", vo.getName());
-          obj1.put("value", vo.getSeq());
-          obj1.put("depth", vo.getDepth());
-          obj1.put("postYn", vo.getPostYn());
+    // depth가 1인 카테고리 목록 셋팅 ( parent )
+    for (HashMap<String, Object> map: categoryAll) {
+        JSONObject obj = new JSONObject();
+        obj.put("name", map.get("name"));
+        obj.put("seq", map.get("seq"));
+        obj.put("depth", map.get("depth"));
+        obj.put("postYn", map.get("postYn"));
+        obj.put("midCategory", new JSONArray());
 
-          upperCategory.add(obj1);
-        }
-        // -----------------------------------------------------------
-        // depth가 2인 카테고리 목록 셋팅 ( parent )
-        // -----------------------------------------------------------
         // JSON parsing 객체 생성
         JSONParser jsonParser = new JSONParser();
-        //JSONParser 객체를 통해 String 형식의 JSON 데이터를 JSON 형식으로 변경
-        Object json = jsonParser.parse(vo.getMidCategory());
-        // 길이가 0, 1이어도 배열로 넘어오는 쿼리기 때문에 JSONArray로 캐스팅
-        JSONArray jsonArray = (JSONArray) json;
+        //JSONParser 객체를 통해 String 형식의 JSON 데이터를 JSON 타입으로 캐스팅
+        Object upperPermissionJson = jsonParser.parse(String.valueOf(map.get("permission")));
+        Object lowerPermissionJson = jsonParser.parse(String.valueOf(map.get("midCategory")));
 
-        for (Object obj : jsonArray) {
-          JSONObject jsonObj = (JSONObject) obj;
-          // obj의 upperSeq와 vo의 seq를 비교하여 하위 카테고리 확인, 게시판 여부를 확인하여 데이터 셋팅
-          if ((long) jsonObj.get("upperSeq") == vo.getSeq() && ((JSONObject) obj).get("postYn").equals("Y")) {
+        // 값이 없거나 있어도 배열로 넘어오는 쿼리기 때문에 JSONArray로 캐스팅
+        JSONArray upperPermissionArr = (JSONArray) upperPermissionJson;
+        JSONArray lowerPermissionArr = (JSONArray) lowerPermissionJson;
 
-            JSONObject category = new JSONObject();
-            // 하위 카테고리로 등록된 게시판 템플릿 걸색
-            HashMap<String, String> template = baseMapper.getTemplateBySeq(obj);
-            // 등록된 템플릿이 있다면
-            if(template != null) {
-              category.put("notice", emptyCheckByTemplate(template.get("notice")));
-              category.put("template", emptyCheckByTemplate(template.get("template")));
-              category.put("prepend", baseMapper.getPrependBySeq(template));
-            } else {
-              category.put("notice", "");
-              category.put("template", "");
-              category.put("prepend", new Array[0]);
-            }
-            category.put("label", jsonObj.get("name"));
-            category.put("value", jsonObj.get("seq"));
-            category.put("upperSeq", jsonObj.get("upperSeq"));
-            category.put("depth", jsonObj.get("depth"));
-            category.put("postYn", jsonObj.get("postYn"));
+        obj.put("permission", upperPermissionArr);
+        setLowerMenuList(menuMap, obj, lowerPermissionArr);
 
-            subCategory.add(category);
-          }
-        }
-      }
-      response.put("parent", upperCategory);
-      response.put("children", subCategory);
-      response.put("tree", baseMapper.getTreeMenu());
-      response.put("category", baseMapper.getAsideMenu(idntfCd));
-
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
+        category.add(obj);
+        // menuMap에 상위 카테고리 저장
+        setMenuMapDiv(menuMap, obj, "parent");
     }
-    // 권한 추가
-    response.put("permission", baseMapper.getAuthPermission());
-
-    return response;
+    menuMap.put("menu", category);
   }
+  /**
+   * 상위 카테고리의 SEQ와 일치하는 하위 카테고리를 찾아 상위카테고리에 추가
+   * @params  HashMap, JSONObject, JSONArray
+   * @return  void
+   * */
+  public void setLowerMenuList(HashMap<String, Object> menuMap, JSONObject obj, JSONArray lowerPermissionArr) throws ParseException {
 
+    log.info("ARR  : "  + lowerPermissionArr.toString());
+    for(int i=0; i<lowerPermissionArr.size(); i++) {
+      // lowerPermissionArr를 순회하는 객체
+      JSONObject jsonObj = (JSONObject) lowerPermissionArr.get(i);
+      // 데이터를 셋팅하여 저장할 새 객체
+      JSONObject newObj = new JSONObject();
+      // 상위 카테고리의 SEQ와 하위 카테고리의 UPPER SEQ가 동일한지 비교
+      boolean isSame = obj.get("seq").toString().equals(jsonObj.get("upperSeq").toString());
+        if(isSame) {
+          newObj.put("name", jsonObj.get("name"));
+          newObj.put("seq", jsonObj.get("seq"));
+          newObj.put("upperSeq", jsonObj.get("upperSeq"));
+          newObj.put("depth", jsonObj.get("depth"));
+          newObj.put("postYn", jsonObj.get("postYn"));
+          newObj.put("url", jsonObj.get("url"));
+
+          JSONParser jsonParser = new JSONParser();
+          Object permission = jsonParser.parse(String.valueOf(jsonObj.get("permission")));
+          JSONArray permissionArr = (JSONArray) permission;
+          newObj.put("permission", permissionArr);
+
+          JSONArray midCategory = (JSONArray) obj.get("midCategory");
+          try {
+            // 하위 카테고리에 등록된 공지사항과 템플릿이 있다면 저장
+            setLowerTemplate(newObj);
+          } catch (Exception e) {
+            throw new RuntimeException(e);
+          }
+          midCategory.add(newObj);
+          // menuMap에 하위 카테고리 저장
+          setMenuMapDiv(menuMap, newObj, "children");
+        }
+    }
+  }
+  /**
+  * 하위 카테고리에 등록된 공지사항과 템플릿이 있다면 저장
+  * @params  JSONObject
+  * @return  void
+  * */
+  public void setLowerTemplate(JSONObject obj) throws Exception {
+    HashMap<String, String> template = baseMapper.getTemplateBySeq(obj);
+    if(template != null) {
+      obj.put("notice", emptyCheckByTemplate(template.get("notice")));
+      obj.put("template", emptyCheckByTemplate(template.get("template")));
+      obj.put("prepend", baseMapper.getPrependBySeq(template));
+    } else {
+      obj.put("notice", "");
+      obj.put("template", "");
+      obj.put("prepend", new Array[0]);
+    }
+  }
+  /**
+   * menuMap에 div에 맞는 데이터 셋팅
+   * @params  HashMap, JSONObject, String
+   * @return  void
+   * */
+  public void setMenuMapDiv(HashMap<String, Object> menuMap, JSONObject obj, String div) {
+    JSONObject newObj = new JSONObject();
+    newObj.put("label", obj.get("name"));
+    newObj.put("value", obj.get("seq"));
+    newObj.put("depth", obj.get("depth")) ;
+    newObj.put("postYn", obj.get("postYn"));
+
+    JSONArray jsonArr = (JSONArray) menuMap.get(div);
+    jsonArr.add(newObj);
+  }
+  /**
+   * 템플릿과 공지사항 유무에 따라 빈값 혹은 값 셋팅
+   * @params  String
+   * @return  String
+   * */
   public String emptyCheckByTemplate(String template) {
     return template == null || template.isEmpty() ? "" : template;
   }
-
 }

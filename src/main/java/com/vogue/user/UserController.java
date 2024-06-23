@@ -1,6 +1,7 @@
 package com.vogue.user;
 
 
+import com.vogue.common.BaseResponse;
 import com.vogue.common.CmmnResponse;
 import com.vogue.user.domain.EmailVO;
 import com.vogue.user.domain.SignInVO;
@@ -28,13 +29,10 @@ public class UserController {
    * @return : ResponseEntity
    * */
   @PostMapping("signIn")
-  public ResponseEntity<?> signIn(@RequestBody SignInVO vo) {
+  public BaseResponse signIn(@RequestBody SignInVO vo) {
     log.info("POST : signIn" + vo.toString());
 
-    CmmnResponse response = userService.signInUser(vo);
-    HttpStatus httpStatus = UserStatus.getStatusByMessage((String) response.getMessage());
-
-    return ResponseEntity.status(httpStatus).body(response);
+    return userService.signInUser(vo);
   }
 
   /*
