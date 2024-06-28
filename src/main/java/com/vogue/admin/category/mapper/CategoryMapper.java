@@ -10,25 +10,42 @@ import java.util.List;
 
 @Mapper
 public interface CategoryMapper {
-  int duplicateName(CategoryVO vo) throws Exception;
-
+  /**
+   * 카테고리 등록 후 RETURNING을 통해 SEQ 반환
+   * @params CategoryVO
+   * @return int
+   * */
   int insertCategory(CategoryVO vo) throws Exception;
-
+  /**
+   * 카테고리 권한 등록
+   * @params CategoryVO
+   * */
   void insertCategoryPermissionGroup(CategoryPermissionVO vo) throws Exception;
-
-  List<CategoryVO> getCategoryAll() throws Exception;
-
-  List<HashMap<String, Object>> getPermissionALl() throws Exception;
-
-  List<HashMap<String, Object>> getSelectOption() throws Exception;
-
-  HashMap<String, Object> selectOneCategory(HashMap<String, Object> param) throws Exception;
-
+  /**
+   * 카테고리 정보 수정
+   * @params CategoryVO
+   * */
+  void updateCategory(CategoryVO vo) throws Exception;
+  /**
+   * 카테고리 권한 조회
+   * @params HashMap
+   * @return List<HashMap>
+   * */
   List<HashMap<String, Object>> selectOneCategoryPermission(HashMap<String, Object> param) throws Exception;
-
-  int updateCategory(CategoryVO vo) throws Exception;
-
-  int deleteCategoryPermissionGroup(CategoryVO vo) throws Exception;
-
-  int deleteCategory(CategoryVO vo) throws Exception;
+  /**
+   * 카테고리 상세 조회
+   * @params HashMap
+   * @return HashMap
+   * */
+  HashMap<String, Object> selectOneCategory(HashMap<String, Object> param) throws Exception;
+  /**
+   * 카테고리 권한 삭제
+   * @params CategoryVO
+   * */
+  void deleteCategoryPermissionGroup(CategoryVO vo) throws Exception;
+  /**
+   * 카테고리, 템플릿 삭제
+   * @params HashMap
+   * */
+  void deleteCategory(HashMap<String, Object> param) throws Exception;
 }

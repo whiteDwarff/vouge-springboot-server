@@ -8,16 +8,23 @@ import java.util.HashMap;
 
 public interface CategoryService {
 
-  CmmnResponse InsertCategory(CategoryVO vo) throws Exception;
   /**
    * PK를 통해 카테고리 정보 검색
    * @params HashMap
    * @return BaseResponse
    * */
   BaseResponse selectCategoryInfo(HashMap<String, Object> param) throws Exception;
-
-  CmmnResponse updateCategory(CategoryVO vo) throws Exception;
-
-  CmmnResponse deleteCategory(CategoryVO vo) throws Exception;
+  /**
+   * 카테고리 저장 및 수정
+   * @params CategoryVO
+   * @return BaseResponse
+   * */
+  BaseResponse saveCategory(CategoryVO vo) throws Exception;
+  /**
+   * 카테고리 및 하위 템플릿 삭제
+   * @params CategoryVO
+   * @return BaseResponse
+   * */
+  BaseResponse deleteCategory(HashMap<String, Object> param) throws Exception;
 
 }

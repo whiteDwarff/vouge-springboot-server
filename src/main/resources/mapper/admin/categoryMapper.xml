@@ -2,95 +2,59 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.vogue.admin.category.mapper.CategoryMapper">
 
-    <!-- 카테고리 등록 01 - 등록된 카테고리명이 있는지 확인-->
-    <select id="duplicateName" parameterType="com.vogue.base.domain.CategoryVO" resultType="int">
-        SELECT COUNT(*) FROM base_category where name = #{name}
-    </select>
-
-    <!-- 카테고리 등록 02 - 카테고리 저장 후 seq 반환-->
     <select id="insertCategory" parameterType="com.vogue.base.domain.CategoryVO" resultType="int">
-        INSERT INTO base_category(
-            upper_seq,
-            name,
-            url,
-            sort,
-            use_yn,
-            post_yn,
-            depth
+        /* 카테고리 등록 후 RETURNING을 통해 SEQ 반환, CategoryMapper_SQL.insertCategory */
+        INSERT INTO BASE_CATEGORY (
+              UPPER_SEQ
+            , NAME
+            , URL
+            , SORT
+            , USE_YN
+            , POST_YN
+            , DEPTH
         ) VALUES (
-            #{upperSeq},
-            #{name},
-            #{url},
-            #{sort},
-            #{useYn},
-            #{postYn},
-            #{depth}
+              #{upperSeq}
+            , #{name}
+            , #{url}
+            , #{sort}
+            , #{useYn}
+            , #{postYn}
+            , #{depth}
         )
-        RETURNING seq
+        RETURNING SEQ
     </select>
 
-    <!-- 카테고리 등록 03 - 권한별 카테고리 등록 -->
     <insert id="insertCategoryPermissionGroup" parameterType="com.vogue.admin.category.domain.CategoryPermissionVO">
-        INSERT INTO base_permission_group (
-            idntf_cd,
-            category_seq,
-            access,
-            add,
-            update,
-            delete
+        /* 카테고리 권한 등록, CategoryMapper_SQL.insertCategoryPermissionGroup */
+        INSERT INTO BASE_PERMISSION_GROUP (
+              IDNTF_CD
+            , CATEGORY_SEQ
+            , ACCESS
+            , ADD
+            , UPDATE
+            , DELETE
         ) VALUES (
-            #{idntfCd},
-            #{categorySeq},
-            #{access},
-            #{add},
-            #{update},
-            #{delete}
+              #{idntfCd}
+            , #{categorySeq}
+            , #{access}
+            , #{add}
+            , #{update}
+            , #{delete}
         )
     </insert>
 
-    <!-- 관리자화면의 [카테고리관리] 메뉴   -->
-    <select id="getCategoryAll" resultType="com.vogue.base.domain.CategoryVO">
-        select  seq,
-            name,
-            depth,
-            upper_seq upperSeq,
-            sort,
-            (select coalesce(json_agg(json_build_object('seq', mid.seq,
-                        'name', mid.name,
-                        'depth', mid.depth,
-                        'upperSeq', mid.upper_seq,
-                        'sort', mid.sort) order by mid.sort asc), '[]')
-            from base_category mid
-            where depth = 2) mid_category
-        from base_category
-        where depth = 1
-        order by sort asc
-    </select>
-
-    <select id="getPermissionALl" resultType="hashmap">
-        select
-            idntf_cd as "idntfCd",
-            idntf_nm as "idntfNm",
-            'Y' as access,
-            'Y' as add,
-            'Y' as update,
-            'Y' as delete
-        from base_permission
-        order by sort asc
-    </select>
-
-    <select id="getSelectOption" resultType="hashmap">
-        select
-            case when b.name is null then a.name
-            else concat(b.name, ' > ', a.name)
-            end label,
-            a.seq value,
-            a.depth
-        from base_category a
-        left join base_category b on a.upper_seq = b.seq
-        where a.depth <![CDATA[<]]> 2
-        order by a.sort asc
-    </select>
+    <update id="updateCategory"  parameterType="com.vogue.base.domain.CategoryVO">
+        /* 카테고리 정보 수정, CategoryMapper_SQL.updateCategory */
+        UPDATE BASE_CATEGORY SET
+           UPPER_SEQ =  #{upperSeq}
+         , NAME      =  #{name}
+         , URL       =  #{url}
+         , SORT      = #{sort}
+         , USE_YN    = #{useYn}
+         , POST_YN   = #{postYn}
+         , DEPTH     =  #{depth}
+        WHERE SEQ    = #{seq}
+    </update>
 
     <select id="selectOneCategory" parameterType="hashmap"  resultType="hashmap">
         /* seq 값을 가진 카테고리의 상세항목 조회, CategoryMapper_SQL.selectOneCategory */
@@ -106,9 +70,8 @@
         WHERE SEQ          = #{seq}
     </select>
 
-    <!-- upper_seq 값을 가진 권한의 상세항목 조회 -->
     <select id="selectOneCategoryPermission" parameterType="hashmap"  resultType="hashMap">
-        /* upper_seq 값을 가진 권한의 상세항목 조회, CategoryMapper_SQL.selectOneCategoryPermission */
+        /*  카테고리 권한 조회, CategoryMapper_SQL.selectOneCategoryPermission */
         SELECT A.SEQ
              , A.IDNTF_CD   AS "idntfCd"
              , B.IDNTF_NM   AS "idntfNm"
@@ -123,30 +86,22 @@
         ORDER BY SORT ASc
     </select>
 
-    <!-- 카테고리 정보 수정 -->
-    <update id="updateCategory"  parameterType="com.vogue.base.domain.CategoryVO">
-        update base_category set
-            upper_seq =  #{upperSeq},
-            name = #{name},
-            url = #{url},
-            sort = #{sort},
-            use_yn = #{useYn},
-            post_yn = #{postYn},
-            depth =  #{depth}
-        where seq = #{seq}
-    </update>
-
-    <!-- seq 값을 가진 항목 삭제 ( permissionGroup )-->
     <delete id="deleteCategoryPermissionGroup" parameterType="com.vogue.base.domain.CategoryVO">
-        delete from base_permission_group
-        where category_seq = #{seq}
+        /* 카테고리 권한 삭제, CategoryMapper_SQL.deleteCategoryPermissionGroup */
+        DELETE FROM BASE_PERMISSION_GROUP
+        WHERE CATEGORY_SEQ = #{seq}
     </delete>
 
-    <!-- seq 값을 가진 항목 삭제 ( category)-->
-    <delete id="deleteCategory" parameterType="com.vogue.base.domain.CategoryVO">
-        delete from base_category
-        where seq = #{seq}
-    </delete>
+    <delete id="deleteCategory" parameterType="hashmap">
+        /* 카테고리, 템플릿 삭제, CategoryMapper_SQL.deleteCategory */
+        DELETE FROM NOTICE
+        WHERE LOWER_SEQ    = #{seq};
 
+        DELETE FROM BASE_PERMISSION_GROUP
+        WHERE CATEGORY_SEQ = #{seq};
+
+        DELETE FROM BASE_CATEGORY
+        WHERE SEQ          = #{seq}
+    </delete>
 
 </mapper>

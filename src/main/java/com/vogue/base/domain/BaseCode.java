@@ -16,6 +16,12 @@ public enum BaseCode {
   UNAUTHORIZED_TOKEN(HttpStatus.UNAUTHORIZED, "Google Captcha 검증에 실패했습니다. 다시 시도해주세요."),
   // LOGIN STATUS END ---------------------------------------------------------
 
+  INSERT_OK(HttpStatus.OK, "등록 성공하였습니다."),
+
+  UPDATE_OK(HttpStatus.OK, "수정 성공하였습니다."),
+
+
+
 
   OK(HttpStatus.OK, "에 성공하였습니다."),
 

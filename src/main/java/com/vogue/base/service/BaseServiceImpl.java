@@ -41,8 +41,7 @@ public class BaseServiceImpl implements BaseService {
     List<HashMap<String, Object>> categoryAll = baseMapper.getAsideMenu(param);
 
     HashMap<String, Object> menuMap = new HashMap<>();
-    HttpStatus status = null;
-    BaseCode code = BaseCode.getOK("조회");
+    HttpStatus status = HttpStatus.OK;
     try {
       menuMap.put("parent", new JSONArray());
       menuMap.put("children", new JSONArray());

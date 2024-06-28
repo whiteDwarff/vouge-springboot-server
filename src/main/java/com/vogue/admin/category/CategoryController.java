@@ -26,59 +26,41 @@ public class CategoryController {
     this.categoryService = categoryService;
   }
 
-  @PostMapping("insert")
-  public ResponseEntity<?> insertCategory(@RequestBody CategoryVO vo) throws Exception{
-
-    log.info("/api/admin/category/insert : " + vo.toString());
-
-    List<CategoryPermissionVO> list = vo.getPermission();
-    for(CategoryPermissionVO a : list) {
-      log.info(a.toString());
-    }
-    CmmnResponse response = categoryService.InsertCategory(vo);
-    int result = (int) response.get("result");
-
-    HttpStatus httpStatus = result > 0 ?
-            CategoryStatus.CONFLICT_NAME.getCode() : CategoryStatus.CREATED.getCode();
-
-    return ResponseEntity.status(httpStatus).body(response);
-  }
   /**
    * PK를 통해 카테고리 정보 검색
-   * params HashMap
-   * result BaseResponse
+   * @params HashMap
+   * @result BaseResponse
    * */
   @PostMapping("selectOne")
   public BaseResponse selectCategoryInfo(@RequestBody HashMap<String, Object> param) throws Exception{
 
-    log.info("/api/admin/category/selectOne : " + param.toString());
+    log.info("POST : /admin/category/selectOne : " + param.toString());
 
     return categoryService.selectCategoryInfo(param);
   }
+  /**
+   * 카테고리 저장, 수정
+   * @params CategoryVO
+   * @result BaseResponse
+   * */
+  @PostMapping("save")
+  public BaseResponse saveCategory(@RequestBody CategoryVO vo) throws Exception{
 
-  @PatchMapping("update")
-  public ResponseEntity<?> updateCategory(@RequestBody CategoryVO vo) throws Exception{
+    log.info("POST : /admin/category/update : " + vo.toString());
 
-    log.info("/api/admin/category/update : " + vo.toString());
-    CmmnResponse response = categoryService.updateCategory(vo);
-
-    HttpStatus status = (int) response.get("result") > 0 ?
-      CategoryStatus.UPDATE.getCode() : CategoryStatus.INTERNAL_SERVER_ERROR_UPDATE.getCode();
-
-    return ResponseEntity.status(status).body(response);
+    return categoryService.saveCategory(vo);
   }
+  /**
+   * 카테고리, 권한, 템플릿 삭제
+   * @params HashMap
+   * @return  BaseResponse
+   * */
+  @PostMapping("delete")
+  public BaseResponse deleteCategory(@RequestBody HashMap<String, Object> param) throws Exception {
 
-  @DeleteMapping("delete")
-  public ResponseEntity<?> deleteCategory(@RequestParam("seq") int seq) throws Exception {
+    log.info("POST : /admin/category/delete : " + param.toString());
 
-    log.info("/api/admin/category/delete : " + String.valueOf(seq));
+    return categoryService.deleteCategory(param);
 
-    CategoryVO category = CategoryVO.builder()
-            .seq(seq)
-            .build();
-
-    CmmnResponse response = categoryService.deleteCategory(category);
-
-    return ResponseEntity.ok(response);
   }
 }

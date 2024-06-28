@@ -8,7 +8,9 @@ import com.vogue.code.CategoryStatus;
 import com.vogue.common.BaseResponse;
 import com.vogue.common.CmmnResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,37 +24,10 @@ public class CategoryServiceImpl implements CategoryService {
     this.categoryMapper = categoryMapper;
   }
 
-
-  public CmmnResponse InsertCategory(CategoryVO vo) throws Exception {
-
-    CmmnResponse response = new CmmnResponse();
-
-    int result = categoryMapper.duplicateName(vo);
-    int seq = 0;
-    String message = CategoryStatus.CREATED.getMessage();
-
-    if (result > 0) message = CategoryStatus.CONFLICT_NAME.getMessage();
-    else {
-      // 카테고리 저장 후 seq 값 반환
-      seq = categoryMapper.insertCategory(vo);
-      // permission group 할당
-      List<CategoryPermissionVO> list = vo.getPermission();
-      // category seq 셋팅 후 DB 저장
-      for (CategoryPermissionVO item : list) {
-        item.setCategorySeq(seq);
-        categoryMapper.insertCategoryPermissionGroup(item);
-      }
-    }
-
-    response.setMessage(message);
-    response.put("result", result);
-
-    return response;
-  }
   /**
    * PK를 통해 카테고리 정보 검색
-   * params HashMap
-   * return BaseResponse
+   * @params HashMap
+   * @return BaseResponse
    * */
   @Override
   public BaseResponse selectCategoryInfo(HashMap<String, Object> param) throws Exception {
@@ -64,51 +39,71 @@ public class CategoryServiceImpl implements CategoryService {
               .result(category)
               .build();
   }
-
+  /**
+   * 카테고리 저장 및 수정
+   * @params  CategoryVO
+   * @return  BaseResponse
+   * */
   @Override
-  public CmmnResponse updateCategory(CategoryVO vo) throws Exception {
+  @Transactional
+  public BaseResponse saveCategory(CategoryVO vo) throws Exception {
 
-    CmmnResponse response = new CmmnResponse();
+    HttpStatus status = null;
+    boolean isState =  0 < vo.getSeq();
 
-    int result = categoryMapper.updateCategory(vo);
-    String message = CategoryStatus.UPDATE.getMessage();
-
-    if (result < 1) message = CategoryStatus.INTERNAL_SERVER_ERROR_UPDATE.getMessage();
-    else {
-      // 해당 permission 삭제
-      categoryMapper.deleteCategoryPermissionGroup(vo);
-      // permission group 할당
-      List<CategoryPermissionVO> list = vo.getPermission();
-      // category seq 셋팅 후 DB 저장
-      for (CategoryPermissionVO item : list) {
-        item.setCategorySeq(vo.getSeq());
-        categoryMapper.insertCategoryPermissionGroup(item);
+    try {
+      // 등록
+      if(!isState) {
+         // 카테고리 저장 후 seq 값 반환
+         int seq  = categoryMapper.insertCategory(vo);
+         // permission group 할당
+         List<CategoryPermissionVO> list = vo.getPermission();
+         // category seq 셋팅 후 DB 저장
+         for (CategoryPermissionVO item : list) {
+            item.setCategorySeq(seq);
+            categoryMapper.insertCategoryPermissionGroup(item);
+          }
+      // 수정
+      } else {
+        categoryMapper.updateCategory(vo);
+        // 해당 permission 삭제
+        categoryMapper.deleteCategoryPermissionGroup(vo);
+        // permission group 할당
+        List<CategoryPermissionVO> list = vo.getPermission();
+        // category seq 셋팅 후 DB 저장
+        for (CategoryPermissionVO item : list) {
+          item.setCategorySeq(vo.getSeq());
+          categoryMapper.insertCategoryPermissionGroup(item);
+        }
       }
+      status = HttpStatus.OK;
+    } catch (Exception e) {
+      e.printStackTrace();
+      status = HttpStatus.BAD_REQUEST;
     }
 
-    response.put("result", result);
-    response.setMessage(message);
-    return response;
+   return BaseResponse.BaseCodeBuilder()
+           .status(status)
+           .build();
   }
-
+  /**
+   * 카테고리, 권한, 템플릿 삭제
+   * @params HashMap
+   * @return  BaseResponse
+   * */
   @Override
-  public CmmnResponse deleteCategory(CategoryVO vo) throws Exception {
+  public BaseResponse deleteCategory(HashMap<String, Object> param) throws Exception {
 
-    CmmnResponse response = new CmmnResponse();
+    HttpStatus status = HttpStatus.OK;
+    try {
+      categoryMapper.deleteCategory(param);
+    } catch (Exception e) {
+      e.printStackTrace();
+      status = HttpStatus.BAD_REQUEST;
+    }
 
-    String message = CategoryStatus.DELETE.getMessage();
-
-    // 권한 삭제 (FOREIGN KEY)
-    int result = categoryMapper.deleteCategoryPermissionGroup(vo);
-    // 카테고리 삭제 (PRIMARY KEY)
-    result += categoryMapper.deleteCategory(vo);
-
-    if(result < 1)
-      message = CategoryStatus.INTERNAL_SERVER_ERROR_DELETE.getMessage();
-
-    response.setMessage(message);
-    response.put("result", result);
-
-    return response;
+    return BaseResponse.BaseCodeBuilder()
+            .status(status)
+            .build();
   }
 }
