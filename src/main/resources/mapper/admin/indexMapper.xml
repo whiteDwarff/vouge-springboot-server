@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vogue.admin.index.mapper.IndexMapper">
+
+    <insert id="insertPermission" parameterType="hashmap">
+        INSERT INTO base_permission (
+            idntf_cd
+            , idntf_nm
+            , memo
+            , sort
+            , created_at
+            , usyn
+        ) VALUES (
+            #{selected.idntfCd},
+            #{selected.idntfNm},
+            #{selected.memo},
+            #{selected.sort}::INTEGER,
+            now(),
+            #{selected.usyn}
+        )
+    </insert>
+
+    <update id="updatePermission" parameterType="hashmap">
+        UPDATE base_permission SET
+        idntf_nm = #{selected.idntfNm}
+        , memo = #{selected.memo}
+        , sort = #{selected.sort}::INTEGER
+        , usyn = #{selected.usyn}
+        WHERE idntf_cd = #{selected.idntfCd}
+    </update>
+
+</mapper>
