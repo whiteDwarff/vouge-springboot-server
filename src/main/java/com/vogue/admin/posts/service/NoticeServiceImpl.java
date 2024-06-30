@@ -57,7 +57,11 @@ public class NoticeServiceImpl implements NoticeService {
             .message(state.getMessage())
             .build();
   }
-
+  /**
+   * 게시판의 템플릿, 공지사항, 말머리 조회
+   * @params HashMap
+   * @return BaseResponse
+   * */
   @Override
   public BaseResponse getPostsList(HashMap<String, Object> param) throws Exception {
 
@@ -75,37 +79,38 @@ public class NoticeServiceImpl implements NoticeService {
     List<HashMap<String, Object>> noticeList = noticeMapper.selectNoticeList(param);
     map.put("notice", noticeList);
 
-    return BaseResponse.builder()
-            .status(HttpStatus.OK)
+    return BaseResponse.BaseCodeBuilder()
             .result(map)
             .build();
   }
 
   @Override
-  public BaseResponse selectOneNotice(Long seq) throws Exception {
+  public BaseResponse selectOneNotice(HashMap<String, Object> param) throws Exception {
 
     HashMap<String, Object> map = new HashMap<>();
-    HttpStatus status;
+    HttpStatus status = null;
 
-    if(Objects.nonNull(seq)) {
-      // 템플릿 상세 데이터
-      HashMap<String, Object> form = noticeMapper.selectOneNotice(seq);
-      // 말머리
-      List<String> prepend = noticeMapper.selectOnePrepend(seq);
+    try {
+      if(Objects.nonNull(param.get("seq"))) {
+        // 템플릿 상세 데이터
+        HashMap<String, Object> form = noticeMapper.selectOneNotice(param);
+        // 말머리
+        List<String> prepend = noticeMapper.selectOnePrepend(param);
 
-      String prependYn = prepend.isEmpty() ? "N" : "Y";
+        String prependYn = prepend.isEmpty() ? "N" : "Y";
 
-      form.put("prependYn", prependYn);
-      form.put("prepend", prepend);
-      map.put("form", form);
+        form.put("prependYn", prependYn);
+        form.put("prepend", prepend);
+        map.put("form", form);
 
-      status = HttpStatus.OK;
-    } else {
-      map.put("message", "잘못된 접근방식 입니다.");
+        status = HttpStatus.OK;
+      }
+    } catch(Exception e) {
+      e.printStackTrace();
       status = HttpStatus.BAD_REQUEST;
     }
 
-    return BaseResponse.builder()
+    return BaseResponse.BaseCodeBuilder()
             .status(status)
             .result(map)
             .build();

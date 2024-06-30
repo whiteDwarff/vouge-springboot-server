@@ -36,11 +36,11 @@ public class BasePagination {
   public HashMap<String, Object> getPagination() {
     HashMap<String, Object> map = new HashMap<>();
 
-    map.put("min", min);
-    map.put("max", max);
-    map.put("current", current);
-    map.put("maxPages", maxPages);
-    map.put("offset", offset);
+    map.put("min", this.min);
+    map.put("max", this.max);
+    map.put("current", this.current);
+    map.put("maxPages", this.maxPages);
+    map.put("offset", this.offset);
 
     return map;
   }
@@ -48,16 +48,16 @@ public class BasePagination {
   public HashMap<String, Object> setPagination(int count, int currentPage) {
 
     if(count > 0) {
-      min = 1;
-      max = (int) Math.ceil((double) count / maxPages);
-      current = currentPage;
-      offset = (current * maxPages) - maxPages;
+      this.min = 1;
+      this.max = (int) Math.ceil((double) count / maxPages);
+      this.current = currentPage;
+      this.offset = (current * maxPages) - maxPages;
     } else {
       // 불러올 데이터가 없으면 초기값 셋팅
-      min = 1;
-      max = 1;
-      current = 1;
-      offset = count;
+      this.min = 1;
+      this.max = 1;
+      this.current = 1;
+      this.offset = count;
     }
     return this.getPagination();
   }

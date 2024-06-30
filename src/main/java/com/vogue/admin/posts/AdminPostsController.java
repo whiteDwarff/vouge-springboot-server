@@ -34,15 +34,14 @@ public class AdminPostsController{
     return noticeService.saveNotice(param);
   }
   /**
-   * @param     : HashMap
-   * @Exception : throws Exception
-   * @return    : ResponseEntity
-   * 게시판 템플릿 리스트 호출
+   * 게시판의 템플릿, 공지사항, 말머리 조회
+   * @params HashMap
+   * @return BaseResponse
    * */
   @PostMapping("get")
   public BaseResponse getPostsList(@RequestBody HashMap<String, Object> param) throws Exception{
 
-    log.info("GET : /api/admin/posts/get : " + param.toString());
+    log.info("GET : /admin/posts/get : " + param.toString());
 
     return noticeService.getPostsList(param);
   }
@@ -52,12 +51,12 @@ public class AdminPostsController{
    * @return    : ResponseEntity
    * 하나의 게시판 템플릿  조회
    * */
-  @GetMapping("selectOne/{seq}")
-  public BaseResponse getSelectOne(@PathVariable("seq") Long seq) throws Exception{
+  @PostMapping
+  public BaseResponse getSelectOne(@RequestBody HashMap<String, Object> param) throws Exception{
 
-    log.info("GET : /api/admin/posts/selectOne/" + String.valueOf(seq));
+    log.info("POST : /admin/posts/selectOne : " + param.toString());
 
-    return noticeService.selectOneNotice(seq);
+    return noticeService.selectOneNotice(param);
   }
 
   @PostMapping("delete")
