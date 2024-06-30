@@ -3,72 +3,79 @@
 <mapper namespace="com.vogue.admin.schedule.mapper.ScheduleMapper">
 
     <select id="getScheduleList" parameterType="hashmap" resultType="hashmap">
+        /* 일정 목록 조회, ScheduleMapper_SQL.getScheduleList */
         SELECT
-             id
+               S.ID
             <if test="author != null and author != ''">
-                ,title
+             , S.TITLE
             </if>
             <if test="author == null or author == ''">
-                ,tu.name || ' • ' || title as title
+             , TU.NAME || ' • ' || TITLE AS TITLE
             </if>
-            ,start
-            ,"end"
-            ,color
-            ,textColor as "textColor"
-            ,display
-        FROM schedule s
-        JOIN tb_user tu on s.author = tu.seq
+             , S.START
+             , S."end"
+             , S.COLOR
+             , S.TEXTCOLOR               AS "textColor"
+             , S.DISPLAY
+        FROM SCHEDULE S
+        JOIN TB_USER TU ON S.AUTHOR      = TU.SEQ
         WHERE 1 = 1
         <if test="start != end">
-            and ( s.start BETWEEN #{start} AND #{end}
-               OR s.end  BETWEEN #{start} AND #{end} )
+            AND (
+                  S.START BETWEEN #{start} AND #{end}
+               OR S."end" BETWEEN #{start} AND #{end}
+            )
         </if>
         <if test="start == end">
-            and ( #{start} BETWEEN s.start AND s.end
-               OR #{end}   BETWEEN s.start AND s.end )
+            AND (
+                  #{start} BETWEEN S.START AND S."end"
+               OR #{end}   BETWEEN S.START AND S."end"
+            )
         </if>
         <if test="author != null and author != ''">
-            and s.author = #{author}
+            AND S.AUTHOR                = #{author}
         </if>
     </select>
 
     <select id="getSchedule" parameterType="hashmap" resultType="hashmap">
+        /* 일정 상세 조회, ScheduleMapper_SQL.getSchedule */
         SELECT
-             s.id
-            ,s.title
-            ,s.content
-            ,s.day_start as "dayStart"
-            ,s.time_start as "timeStart"
-            ,s.start as start
-            ,s.day_end as "dayEnd"
-            ,s.time_end as "timeEnd"
-            ,s.end
-            ,s.display
-            ,s.color
-            ,s.textcolor as "textColor"
-            ,s.author
-            ,TO_CHAR(s.created_at , 'yyyy-mm-dd') created_at
-            ,TO_CHAR(s.updated_at , 'yyyy-mm-dd') updated_at
+              S.ID
+            , S.TITLE
+            , S.CONTENT
+            , S.DAY_START                         AS "dayStart"
+            , S.TIME_START                        AS "timeStart"
+            , S.START
+            , S.DAY_END                           AS "dayEnd"
+            , S.TIME_END                          AS "timeEnd"
+            , S."end"
+            , S.DISPLAY
+            , S.COLOR
+            , S.TEXTCOLOR                         AS "textColor"
+            , S.AUTHOR
+            ,TO_CHAR(S.CREATED_AT , 'yyyy-mm-dd') AS "createdAt"
+            ,TO_CHAR(S.UPDATED_AT , 'yyyy-mm-dd') AS "updatedAt"
             ,TU.NAME
         FROM SCHEDULE S
         JOIN TB_USER TU ON S.AUTHOR = TU.SEQ
-        WHERE S.ID = CAST(#{id} as INTEGER)
+        WHERE S.ID = CAST(#{id} AS INTEGER)
     </select>
 
-    <insert id="insertSchedule" parameterType="hashmap">
-        INSERT INTO schedule (
-            title,
-            content,
-            start,
-            "end",
-            day_start,
-            day_end,
-            time_start,
-            time_end,
-            display,
-            color,
-            textColor,
-            author
+    <select id="insertSchedule" parameterType="hashmap" resultType="int">
+        /* 일정 등록, ScheduleMapper_SQL.insertSchedule */
+        INSERT INTO SCHEDULE (
+              TITLE
+            , CONTENT
+            , START
+            , "end"
+            , DAY_START
+            , DAY_END
+            , TIME_START
+            , TIME_END
+            , DISPLAY
+            , COLOR
+            , TEXTCOLOR
+            , AUTHOR
         ) VALUES (
             #{title},
             #{content},
@@ -83,29 +90,30 @@
             #{textColor},
             #{author}
         )
-    </insert>
+        RETURNING ID
+    </select>
 
     <update id="updateSchedule" parameterType="hashmap">
-        UPDATE schedule SET
-            title = #{title},
-            content = #{content},
-            start = #{start},
-            "end" = #{end},
-            day_start = #{dayStart},
-            day_end = #{dayEnd},
-            time_start = #{timeStart},
-            time_end = #{timeEnd},
-            display = #{display},
-            color = #{color},
-            textColor = #{textColor},
-            updated_at = CURRENT_TIMESTAMP
-        WHERE 1 = 1
-            AND id = #{id}
+        /* 일정 수정, ScheduleMapper_SQL.updateSchedule */
+        UPDATE SCHEDULE SET
+            TITLE       = #{title},
+            CONTENT     = #{content},
+            START       = #{start},
+            "end"       = #{end},
+            DAY_START   = #{dayStart},
+            DAY_END     = #{dayEnd},
+            TIME_START  = #{timeStart},
+            TIME_END    = #{timeEnd},
+            DISPLAY     = #{display},
+            COLOR       = #{color},
+            TEXTCOLOR   = #{textColor},
+            UPDATED_AT  =  CURRENT_TIMESTAMP
+        WHERE ID = #{id}
     </update>
 
     <delete id="deleteSchedule" parameterType="hashmap">
-        DELETE FROM schedule
-        WHERE id = #{id}
+        /* 일정 삭제, ScheduleMapper_SQL.deleteSchedule */
+        DELETE FROM schedule  WHERE ID = #{id}
     </delete>
 
 </mapper>
