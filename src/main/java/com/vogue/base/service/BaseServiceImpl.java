@@ -35,7 +35,6 @@ public class BaseServiceImpl implements BaseService {
    * @params param
    * @return BaseResponse
    * */
-
   @Override
   public BaseResponse getSystemMenu(HashMap<String, Object> param) throws Exception {
     List<HashMap<String, Object>> categoryAll = baseMapper.getAsideMenu(param);

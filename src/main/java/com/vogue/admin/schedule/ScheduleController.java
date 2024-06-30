@@ -22,55 +22,51 @@ public class ScheduleController {
     this.scheduleService = scheduleService;
   }
 
-
   /**
-   * @params     : HashMap
-   * @Exception : throws Exception
-   * @return    : ResponseEntity
-   * 일정 목록  조회
+   * 일정 목록 조회
+   * @params HashMap
+   * @return BaseResponse
    * */
   @PostMapping("get")
   public BaseResponse getScheduleList(@RequestBody HashMap<String, Object> param) throws Exception{
 
-    log.info("POST : /api/admin/schedule/get : " + param.toString());
+    log.info("POST : /admin/schedule/get : " + param.toString());
 
     return scheduleService.getScheduleList(param);
-  }/**
-   * @params     : HashMap
-   * @Exception : throws Exception
-   * @return    : ResponseEntity
-   * 일정 상세조회
+  }
+  /**
+   * 일정 상세 조회
+   * @params HashMap
+   * @return BaseResponse
    * */
   @PostMapping("selectOne")
   public BaseResponse getSchedule(@RequestBody HashMap<String, Object> param) throws Exception{
 
-    log.info("POST : /api/admin/schedule/selectOne : " + param.toString());
+    log.info("POST : /admin/schedule/selectOne : " + param.toString());
 
     return scheduleService.getSchedule(param);
   }
   /**
-   * @params     : HashMap
-   * @Exception : throws Exception
-   * @return    : ResponseEntity
    * 일정 등록 및 수정
+   * @params HashMap
+   * @return BaseResponse
    * */
   @PostMapping("save")
   public BaseResponse saveSchedule(@RequestBody HashMap<String, Object> param) throws Exception{
 
-    log.info("POST : /api/admin/schedule/save : " + param.toString());
+    log.info("POST : /admin/schedule/save : " + param.toString());
 
     return scheduleService.saveSchedule(param);
   }
   /**
-   * @params     : HashMap
-   * @Exception : throws Exception
-   * @return    : ResponseEntity
-   * 일정 등록 및 수정
+   * 일정 삭제
+   * @params HashMap
+   * @return BaseResponse
    * */
   @PostMapping("delete")
   public BaseResponse deleteSchedule(@RequestBody HashMap<String, Object> param) throws Exception{
 
-    log.info("POST : /api/admin/schedule/delete : " + param.toString());
+    log.info("POST : /admin/schedule/delete : " + param.toString());
 
     return scheduleService.deleteSchedule(param);
   }
