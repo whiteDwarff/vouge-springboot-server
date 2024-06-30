@@ -24,41 +24,45 @@ public class NoticeServiceImpl implements NoticeService {
     this.noticeMapper = noticeMapper;
   }
 
+  /**
+   * 템플릿, 말머리 등록 및 수정
+   * @params HashMap
+   * @return BaseResponse
+   * */
   @Override
   @Transactional
   public BaseResponse saveNotice(HashMap<String, Object> param) throws Exception {
+    HttpStatus status = HttpStatus.OK;
+    try {
+      // 1. upper_seq와 lowser_seq에 일치하는 모든 공지사항 미사용으로 변경
+      noticeMapper.updateNoticeUseYn(param);
 
-    int result = 0;
-    // 1. upper_seq와 lowser_seq에 일치하는 모든 공지사항 미사용으로 변경
-    noticeMapper.updateNoticeUseYn(param);
-
-    // 2. 등록 - form의 기본값에 seq가 없다.
-    if(!Objects.nonNull(param.get("seq"))) {
-      result = noticeMapper.insertNotice(param);
-    // 2. 수정 -  tablerow 클릭 시 form의 value엔 seq가 셋팅된다.
-    } else {
-      result = noticeMapper.updateNotice(param);
-      // 말머리 삭제 후 재등록
-      noticeMapper.deletePrepend(param);
+      // 2. 등록 - form의 기본값에 seq가 없다.
+      if(!Objects.nonNull(param.get("seq"))) {
+        noticeMapper.insertNotice(param);
+      // 2. 수정 -  tablerow 클릭 시 form의 value엔 seq가 셋팅된다.
+      } else {
+        noticeMapper.updateNotice(param);
+        // 말머리 삭제 후 재등록
+        noticeMapper.deletePrepend(param);
+      }
+      // 빈값 확인용
+      ArrayList<String> prepend = (ArrayList<String>) param.get("prepend");
+      // 말머리 등록
+      if(param.get("prependYn").equals("Y") && !prepend.isEmpty()) {
+        noticeMapper.insertPrepend(param);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      status = HttpStatus.BAD_REQUEST;
     }
 
-    // 빈값 확인용
-    ArrayList<String> prepend = (ArrayList<String>) param.get("prepend");
-    // 말머리 등록
-    if(param.get("prependYn").equals("Y") && !prepend.isEmpty()) {
-      noticeMapper.insertPrepend(param);
-    }
-
-    AdminPostsStatus state =
-      result == 1 ? AdminPostsStatus.NOTICE_CREATED : AdminPostsStatus.INTERNAL_SERVER_ERROR;
-
-    return BaseResponse.builder()
-            .status(state.getCode())
-            .message(state.getMessage())
+    return BaseResponse.BaseCodeBuilder()
+            .status(status)
             .build();
   }
   /**
-   * 게시판의 템플릿, 공지사항, 말머리 조회
+   * 게시판의 템플릿, 말머리 목록 조회
    * @params HashMap
    * @return BaseResponse
    * */
@@ -83,7 +87,11 @@ public class NoticeServiceImpl implements NoticeService {
             .result(map)
             .build();
   }
-
+  /**
+   * 게시판의 템플릿, 말머리 조회
+   * @params HashMap
+   * @return BaseResponse
+   * */
   @Override
   public BaseResponse selectOneNotice(HashMap<String, Object> param) throws Exception {
 
@@ -115,23 +123,35 @@ public class NoticeServiceImpl implements NoticeService {
             .result(map)
             .build();
   }
-
+  /**
+   * 게시판의 템플릿, 말머리 삭제
+   * @params List
+   * @return BaseResponse
+   * */
   @Override
   public BaseResponse deleteNotice(List<HashMap<String, Object>> param) throws Exception {
 
     HttpStatus status = HttpStatus.OK;
     int result = 0;
 
-    if(!param.isEmpty()) {
-      for(HashMap<String, Object> notice : param) {
-        noticeMapper.deleteNotice(notice);
-        result ++;
+    try {
+      if(!param.isEmpty()) {
+        for(HashMap<String, Object> notice : param) {
+          noticeMapper.deleteNotice(notice);
+          result ++;
+        }
       }
+    } catch (Exception e) {
+      e.printStackTrace();
+      status = HttpStatus.BAD_REQUEST;
     }
 
-    return BaseResponse.builder()
-            .status(AdminPostsStatus.DELETE_OK.getCode())
-            .message(String.valueOf(result) + AdminPostsStatus.DELETE_OK.getMessage())
+    HashMap<String, Object> map = new HashMap<>();
+    map.put("result", result);
+
+    return BaseResponse.BaseCodeBuilder()
+            .result(map)
+            .status(status)
             .build();
   }
 }

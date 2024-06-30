@@ -27,7 +27,7 @@ public class PostsServiceImpl implements PostsService{
   public BaseResponse savePosts(HashMap<String, Object> param) throws Exception {
 
     String seq = (String) param.get("seq");
-    HttpStatus status = null;
+    HttpStatus status = HttpStatus.OK;
 
     try {
       // 게시글 등록
@@ -37,6 +37,7 @@ public class PostsServiceImpl implements PostsService{
 
       }
     } catch (Exception e) {
+      e.printStackTrace();
       status = HttpStatus.BAD_REQUEST;
     }
 

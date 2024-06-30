@@ -160,8 +160,10 @@ public class BaseServiceImpl implements BaseService {
    * */
   public void setMenuMapDiv(HashMap<String, Object> menuMap, JSONObject obj, String div) {
     JSONObject newObj = new JSONObject();
+    log.info("######## OBJ : " + obj.toString());
     newObj.put("label", obj.get("name"));
     newObj.put("value", obj.get("seq"));
+    newObj.put("upperSeq", obj.get("upperSeq"));
     newObj.put("depth", obj.get("depth")) ;
     newObj.put("postYn", obj.get("postYn"));
 

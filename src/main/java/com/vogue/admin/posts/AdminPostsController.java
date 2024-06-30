@@ -21,10 +21,9 @@ public class AdminPostsController{
   }
 
   /**
-   * @param     : HashMap
-   * @Exception : throws Exception
-   * @return    : ResponseEntity
-   * 게시판 템플릿 등록, 수정 처리
+   * 템플릿, 말머리 등록 및 수정
+   * @params HashMap
+   * @return BaseResponse
    * */
   @PostMapping("saveNotice")
   public BaseResponse saveNotice(@RequestBody HashMap<String, Object> param) throws Exception{
@@ -34,7 +33,7 @@ public class AdminPostsController{
     return noticeService.saveNotice(param);
   }
   /**
-   * 게시판의 템플릿, 공지사항, 말머리 조회
+   * 게시판의 템플릿, 말머리 목록 조회
    * @params HashMap
    * @return BaseResponse
    * */
@@ -46,19 +45,22 @@ public class AdminPostsController{
     return noticeService.getPostsList(param);
   }
   /**
-   * @param     : HashMap
-   * @Exception : throws Exception
-   * @return    : ResponseEntity
-   * 하나의 게시판 템플릿  조회
+   * 게시판의 템플릿, 말머리 조회
+   * @params HashMap
+   * @return BaseResponse
    * */
   @PostMapping
-  public BaseResponse getSelectOne(@RequestBody HashMap<String, Object> param) throws Exception{
+  public BaseResponse selectOne(@RequestBody HashMap<String, Object> param) throws Exception{
 
     log.info("POST : /admin/posts/selectOne : " + param.toString());
 
     return noticeService.selectOneNotice(param);
   }
-
+  /**
+   * 게시판의 템플릿, 말머리 삭제
+   * @params HashMap
+   * @return BaseResponse
+   * */
   @PostMapping("delete")
   public BaseResponse deleteNotice(@RequestBody List<HashMap<String, Object>> param) throws Exception{
 

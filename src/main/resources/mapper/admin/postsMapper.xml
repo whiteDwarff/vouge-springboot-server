@@ -3,7 +3,7 @@
 <mapper namespace="com.vogue.admin.posts.mapper.NoticeMapper">
 
     <insert id="insertNotice" parameterType="hashmap">
-        /* 템플릿 등록, NoticeMapper.insertNotice */
+        /* 템플릿 등록, NoticeMapper_SQL.insertNotice */
         <selectKey keyProperty="seq" order="AFTER" resultType="int">
             SELECT CURRVAL('notice_seq') AS SEQ
         </selectKey>
@@ -26,7 +26,7 @@
     </insert>
 
     <update id="updateNotice" parameterType="hashmap">
-        /* 템플릿 수정, NoticeMapper.updateNotice */
+        /* 템플릿 수정, NoticeMapper_SQL.updateNotice */
         UPDATE NOTICE SET
               UPPER_SEQ   = #{upperSeq}
             , LOWER_SEQ   = #{lowerSeq}
@@ -39,7 +39,7 @@
     </update>
 
     <update id="updateNoticeUseYn" parameterType="hashmap">
-        /* 템플릿 수정 시 UPPER_SEQ, LOWER_SEQ와 일치하는 모든 공지사항 USE_YN 변경,  NoticeMapper.updateNoticeUseYn*/
+        /* 템플릿 수정 시 UPPER_SEQ, LOWER_SEQ와 일치하는 모든 공지사항 USE_YN 변경,  NoticeMapper_SQL.updateNoticeUseYn*/
         UPDATE NOTICE SET
             USE_YN = 'N'
         WHERE UPPER_SEQ    = #{upperSeq}
@@ -60,75 +60,74 @@
     </insert>
 
     <delete id="deletePrepend" parameterType="hashmap">
-        /* 말머리 삭제, NoticeMapper.deletePrepend */
+        /* 말머리 삭제, NoticeMapper_SQL.deletePrepend */
         DELETE FROM PREPEND WHERE UPPERSEQ = #{seq}
     </delete>
 
-    <select id="selectOnePrepend" parameterType="hashmap" resultType="hashmap">
-        /*  게시글에 맞는 말머리 리스트 검색,  NoticeMapper.selectOnePrepend */
-        SELECT PREPEND, UPPERSEQ FROM PREPEND WHERE UPPERSEQ = #{seq}
+    <select id="selectOnePrepend" parameterType="hashmap" resultType="String">
+        /*  게시글에 맞는 말머리 리스트 검색,  NoticeMapper_SQL.selectOnePrepend */
+        SELECT PREPEND FROM PREPEND WHERE UPPERSEQ = #{seq}
     </select>
 
-    <select id="selectNoticeCount" parameterType="hashmap" resultType="int">
-        select count(*) from (
-            select
-                n.seq,
-                n.title as content,
-                case when n.use_yn = 'Y' then '사용'
-                else '미사용'
-                end "useYn",
-                to_char(n.created_at, 'yyyy-mm-dd') as "createdAt",
-                n.notice,
-                n.template,
-                n.upper_seq,
-                n.use_yn,
-                bc.name as category
-            from notice n
-            join base_category bc on n.lower_seq = bc.seq
-            where 1 = 1
+    <sql id="noticeList-where">
+        <where>
+            1 = 1
             <if test="option == 'title' and value != ''">
-                and n.title like concat('%', #{value}, '%')
+                AND N.TITLE LIKE CONCAT('%', ${value}, '%')
             </if>
             <if test="option == 'upperSeq' and value != ''">
-                and n.upper_seq = #{value}
+                AND N.UPPER_SEQ = #{value}
             </if>
             <if test="option == 'useYn' and value != ''">
-                and n.use_yn = #{value}
+                AND N.USE_YN = #{value}
             </if>
-        ) a
+        </where>
+    </sql>
+
+    <select id="selectNoticeCount" parameterType="hashmap" resultType="int">
+        /*  템플릿 목록 개수 조회,  NoticeMapper_SQL.selectNoticeCount */
+        SELECT COUNT(*) FROM (
+            SELECT
+                  N.SEQ
+                , N.TITLE AS CONTENT
+                , CASE WHEN N.USE_YN = 'Y' THEN '사용'
+                    ELSE '미사용'
+                  END                                 AS "useYn"
+                , TO_CHAR(N.CREATED_AT, 'YYYY-MM-DD') AS "createdAt"
+                , N.NOTICE
+                , N.TEMPLATE
+                , N.UPPER_SEQ
+                , N.USE_YN
+                , BC.NAME                             AS "category"
+            FROM NOTICE N
+            JOIN BASE_CATEGORY BC ON N.LOWER_SEQ = BC.SEQ
+            <include refid="noticeList-where"></include>
+        ) A
     </select>
 
     <select id="selectNoticeList" parameterType="hashmap" resultType="hashmap">
-        select
-            n.seq,
-            n.title as content,
-            case when n.use_yn = 'Y' then '사용'
-                else '미사용'
-            end "useYn",
-            to_char(n.created_at, 'yyyy-mm-dd') as "createdAt",
-            n.notice,
-            n.template,
-            n.upper_seq,
-            n.use_yn,
-            bc.name as category
-        from notice n
-        join base_category bc on n.lower_seq = bc.seq
-        where 1 = 1
-        <if test="option == 'title' and value != ''">
-            and n.title like concat('%', #{value}, '%')
-        </if>
-        <if test="option == 'upperSeq' and value != ''">
-            and n.upper_seq = #{value}
-        </if>
-        <if test="option == 'useYn' and value != ''">
-            and n.use_yn = #{value}
-        </if>
-        order by n.created_at desc
-        limit #{maxPages} offset #{offset}
+        /*  템플릿 목록 조회,  NoticeMapper_SQL.selectNoticeList */
+        SELECT
+              N.SEQ
+            , N.TITLE AS CONTENT
+            , CASE WHEN N.USE_YN = 'Y' THEN '사용'
+                ELSE '미사용'
+              END                                 AS "useYn"
+            , TO_CHAR(N.CREATED_AT, 'YYYY-MM-DD') AS "createdAt"
+            , N.NOTICE
+            , N.TEMPLATE
+            , N.UPPER_SEQ
+            , N.USE_YN
+            , BC.NAME                             AS "category"
+        FROM NOTICE N
+        JOIN BASE_CATEGORY BC ON N.LOWER_SEQ = BC.SEQ
+        <include refid="noticeList-where"></include>
+        ORDER BY N.CREATED_AT DESC
+        LIMIT #{maxPages} OFFSET #{offset}
     </select>
 
     <select id="selectOneNotice" parameterType="hashmap" resultType="hashmap">
-        /*  템플릿 데이터 상세 조회,  NoticeMapper.selectOneNotice */
+        /*  템플릿 데이터 상세 조회,  NoticeMapper_SQL.selectOneNotice */
         SELECT
               SEQ
             , TEMPLATE
@@ -143,7 +142,8 @@
     </select>
 
     <delete id="deleteNotice" parameterType="hashmap">
-        /*  템플릿 삭제,  NoticeMapper.deleteNotice */
+        /*  템플릿 삭제,  NoticeMapper_SQL.deleteNotice */
         DELETE FROM NOTICE WHERE SEQ = #{seq}
     </delete>
+
 </mapper>
