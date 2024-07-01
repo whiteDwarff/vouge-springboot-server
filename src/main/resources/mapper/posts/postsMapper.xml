@@ -31,23 +31,46 @@
         )
     </insert>
 
-    <select id="selectOne" parameterType="hashmap" resultType="hashmap">
-        /* 게시글 상세 검색 , PostMapper_SQL.selectOne*/
+    <select id="selectByPaging" parameterType="hashmap" resultType="hashmap">
+        /* 게시글 목록 조회, PostMapper_SQL.selectByPaging */
         SELECT
-                P.SEQ 							 "postSeq"
-              , BC.SEQ							 "categorySeq"
-              , TU.SEQ 							 "authorSeq"
+            P.SEQ
+            , P.TITLE
+            , TO_CHAR(P.CREATEDAT, 'YYYY-MM-DD') 		  AS "createdAt"
+            , P.READCOUNT                                 AS "readCount"
+            , P.LIKECOUNT                                 AS "likeCount"
+            , TU.NAME
+            , ROW_NUMBER() OVER(ORDER BY P.CREATEDAT ASC) AS "rowNum"
+        FROM POSTS P
+        JOIN TB_USER TU
+            ON P.AUTHOR = TU.SEQ
+        WHERE P.LOWERSEQ =  CAST (#{category} AS INTEGER)
+        ORDER BY P.CREATEDAT DESC
+    </select>
+
+    <select id="selectByPagingCount" parameterType="hashmap" resultType="int">
+        /* 게시글 목록 개수 조회, PostMapper_SQL.selectByPagingCount */
+        SELECT COUNT(*) FROM POSTS P
+        WHERE P.LOWERSEQ =    CAST (#{category} AS INTEGER)
+    </select>
+
+    <select id="selectOne" parameterType="hashmap" resultType="hashmap">
+        /* 게시글 상세 검색 , PostMapper_SQL.selectOne */
+        SELECT
+                P.SEQ 							   AS  "postSeq"
+              , BC.SEQ							   AS  "categorySeq"
+              , TU.SEQ 							   AS  "authorSeq"
               , CASE WHEN P.PREPEND != '' THEN  '[ ' || P.PREPEND || ' ]' || P.TITLE
                     ELSE P.TITLE
-                END 							 "title"
+                END 							   AS  "title"
              , P.CONTENT
              , TU.NICKNAME
-             , BC.NAME 							 "categoryNm"
-             , BP.IDNTF_NM                       "idntfNm"
+             , BC.NAME 			  	        	   AS  "categoryNm"
+             , BP.IDNTF_NM                         AS  "idntfNm"
              , TU.PHOTO_URL
-             , P.READCOUNT                       "readCount"
-             , P.LIKECOUNT                       "likeCount"
-             , TO_CHAR(P.CREATEDAT, 'YYYY-MM-DD') "createdAt"
+             , P.READCOUNT                         AS  "readCount"
+             , P.LIKECOUNT                         AS  "likeCount"
+             , TO_CHAR(P.CREATEDAT, 'YYYY-MM-DD')  AS  "createdAt"
         FROM POSTS P
         JOIN TB_USER TU
             ON P.AUTHOR  = TU.SEQ
@@ -55,8 +78,8 @@
             ON TU.IDNTF_CD = BP.IDNTF_CD
         JOIN BASE_CATEGORY BC
             ON P.LOWERSEQ = BC.SEQ
-        WHERE CAST(P.SEQ AS VARCHAR)            = #{posts}
-            AND CAST(P.LOWERSEQ AS VARCHAR)     = #{category}
+        WHERE CAST(P.SEQ AS VARCHAR)               = #{posts}
+            AND CAST(P.LOWERSEQ AS VARCHAR)        = #{category}
     </select>
 
 </mapper>

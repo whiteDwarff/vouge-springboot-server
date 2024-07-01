@@ -3,6 +3,7 @@ package com.vogue.posts.mapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.HashMap;
+import java.util.List;
 
 @Mapper
 public interface PostsMapper {
@@ -17,4 +18,16 @@ public interface PostsMapper {
    * @return HashMap
    * */
   HashMap<String, Object> selectOne(HashMap<String, Object> param) throws Exception;
+  /**
+   * 게시글 목록 조회
+   * @params HashMap
+   * @return List
+   * */
+  List<HashMap<String, Object>> selectByPaging(HashMap<String, Object> param) throws Exception;
+  /**
+   * 게시글 목록 개수 조회
+   * @params HashMap
+   * @return int
+   * */
+  int selectByPagingCount(HashMap<String, Object> param) throws Exception;
 }

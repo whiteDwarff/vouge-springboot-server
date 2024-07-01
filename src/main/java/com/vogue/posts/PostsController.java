@@ -18,20 +18,41 @@ public class PostsController {
   public PostsController(PostsService postsService) {
     this.postsService = postsService;
   }
+
+  /**
+   * 게시들 등록 및 수정
+   * @params HashMap
+   * @return BaseResponse
+   * */
   @PostMapping("save")
-  public BaseResponse savePosts(@RequestBody HashMap<String, Object> param) throws Exception {
+  public BaseResponse save(@RequestBody HashMap<String, Object> param) throws Exception {
 
     log.info("POST : /api/posts/save : " + param.toString());
 
-    return postsService.savePosts(param);
+    return postsService.save(param);
   }
-
+  /**
+   * 게시글 상세 조회
+   * @params HashMap
+   * @return BaseResponse
+   * */
   @PostMapping("selectOne")
   public BaseResponse selectOne(@RequestBody HashMap<String, Object> param) throws Exception {
 
-    log.info("POST : /api/posts/getPostsDetail" + param.toString());
+    log.info("POST : /api/posts/selectOne" + param.toString());
 
     return postsService.selectOne(param);
+  }
+  /**
+   * 게시글 목록 조회
+   * @params HashMap
+   * @return BaseResponse
+   * */
+  @PostMapping("selectByPaging")
+  public BaseResponse selectByPaging(@RequestBody HashMap<String, Object> param) throws Exception {
 
+    log.info("POST : /api/posts/selectByPaging" + param.toString());
+
+    return postsService.selectByPaging(param);
   }
 }

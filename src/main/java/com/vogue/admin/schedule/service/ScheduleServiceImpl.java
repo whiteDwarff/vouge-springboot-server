@@ -57,6 +57,7 @@ public class ScheduleServiceImpl implements ScheduleService{
 
     HttpStatus status = HttpStatus.OK;
     HashMap<String, Object> map = new HashMap<>();
+
     try {
       if(!param.get("author").equals("") || param.containsKey("author")) {
         if(param.get("id").equals("")) {

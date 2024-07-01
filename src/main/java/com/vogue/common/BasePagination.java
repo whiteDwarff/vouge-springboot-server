@@ -15,15 +15,15 @@ import java.util.HashMap;
 @Slf4j
 public class BasePagination {
 
-  private int min;
+  private int min;                  // 최소 페이지 (1)
 
-  private int max;
+  private int max;                  // 최대 페이지 (count 값)
 
-  private int current;
+  private int current;              // 현재 페이지
 
-  private int offset;
+  private int offset;               // 불러올 개수, LIMIT 0, 20
 
-  private final int maxPages = 10;
+  private final int maxPages = 10;  // 한 페이지에 보여줄 리스트 개수
 
   @Builder
   public BasePagination(int min, int max, int current, int offset) {

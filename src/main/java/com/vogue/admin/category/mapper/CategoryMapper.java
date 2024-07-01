@@ -1,7 +1,6 @@
 package com.vogue.admin.category.mapper;
 
 import com.vogue.admin.category.domain.CategoryPermissionVO;
-import com.vogue.base.domain.AuthPermissionVO;
 import com.vogue.base.domain.CategoryVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -29,7 +28,7 @@ public interface CategoryMapper {
   /**
    * 카테고리 권한 조회
    * @params HashMap
-   * @return List<HashMap>
+   * @return List
    * */
   List<HashMap<String, Object>> selectOneCategoryPermission(HashMap<String, Object> param) throws Exception;
   /**
