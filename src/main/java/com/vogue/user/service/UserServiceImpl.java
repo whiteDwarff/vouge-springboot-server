@@ -47,12 +47,12 @@ public class UserServiceImpl implements UserService{
         // 가입한 이메일이 있는 경우
         if(result > 0) {
           user = mapper.signInUser(signIn);
-          Boolean captcha = captchaService.verifyToken(signIn.getToken());
+          // Boolean captcha = captchaService.verifyToken(signIn.getToken());
           // 비밀번호가 일치하지 않은 경우
           if (!Objects.nonNull(user))  status = HttpStatus.UNAUTHORIZED;
 
           // google ReCaptcha 검증에 실패한 경우
-          if (!captcha) status = HttpStatus.FORBIDDEN;
+         //  if (!captcha) status = HttpStatus.FORBIDDEN;
         }
       } catch (Exception e) {
         status = HttpStatus.NOT_FOUND;

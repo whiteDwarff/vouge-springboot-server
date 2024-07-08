@@ -77,7 +77,6 @@ public class PostsServiceImpl implements PostsService{
         param.put("offset", page.getOffset());
         param.put("list", postsMapper.selectByPaging(param));
 
-        log.info("@@@@@@@ PARAM : " + param.toString());
       }
     } catch (Exception e) {
       e.printStackTrace();
