@@ -35,8 +35,6 @@ public class BaseFileUtil {
       // 저장경로
       String uploadFilePath = filePath + uploadPath + "/" + saveFileName;
 
-      log.info("@@@@@@@@ : " + uploadFilePath);
-
       File uploadFile = new File(uploadFilePath);
 
       // 해당 경로에 폴더가 없다면 폴더 생성
