@@ -40,12 +40,14 @@
             , P.READCOUNT                                 AS "readCount"
             , P.LIKECOUNT                                 AS "likeCount"
             , TU.NAME
+            , P.LOWERSEQ
             , ROW_NUMBER() OVER(ORDER BY P.CREATEDAT ASC) AS "rowNum"
         FROM POSTS P
         JOIN TB_USER TU
             ON P.AUTHOR = TU.SEQ
         WHERE P.LOWERSEQ =  CAST (#{category} AS INTEGER)
         ORDER BY P.CREATEDAT DESC
+        LIMIT #{maxPages} OFFSET #{offset}
     </select>
 
     <select id="selectByPagingCount" parameterType="hashmap" resultType="int">
@@ -60,7 +62,7 @@
                 P.SEQ 							   AS  "postSeq"
               , BC.SEQ							   AS  "categorySeq"
               , TU.SEQ 							   AS  "authorSeq"
-              , CASE WHEN P.PREPEND != '' THEN  '[ ' || P.PREPEND || ' ]' || P.TITLE
+              , CASE WHEN P.PREPEND != '' THEN  '[ ' || P.PREPEND || ' ]  ' || P.TITLE
                     ELSE P.TITLE
                 END 							   AS  "title"
              , P.CONTENT
@@ -78,7 +80,7 @@
             ON TU.IDNTF_CD = BP.IDNTF_CD
         JOIN BASE_CATEGORY BC
             ON P.LOWERSEQ = BC.SEQ
-        WHERE CAST(P.SEQ AS VARCHAR)               = #{posts}
+            WHERE CAST(P.SEQ AS VARCHAR)           = #{posts}
             AND CAST(P.LOWERSEQ AS VARCHAR)        = #{category}
     </select>
 

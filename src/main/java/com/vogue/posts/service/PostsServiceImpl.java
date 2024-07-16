@@ -56,8 +56,13 @@ public class PostsServiceImpl implements PostsService{
    * */
   @Override
   public BaseResponse selectOne(HashMap<String, Object> param) throws Exception {
-    return BaseResponse.builder()
-            .result(postsMapper.selectOne(param))
+
+    HashMap<String, Object> result = postsMapper.selectOne(param);
+    HttpStatus status = result == null ? HttpStatus.NOT_FOUND : HttpStatus.OK;
+
+    return BaseResponse.BaseCodeBuilder()
+            .status(status)
+            .result(result)
             .build();
   }
   /**
@@ -74,9 +79,7 @@ public class PostsServiceImpl implements PostsService{
         BasePagination page = new BasePagination();
 
         param.put("page", page.setPagination(count, (int) param.get("current")));
-        param.put("offset", page.getOffset());
         param.put("list", postsMapper.selectByPaging(param));
-
       }
     } catch (Exception e) {
       e.printStackTrace();

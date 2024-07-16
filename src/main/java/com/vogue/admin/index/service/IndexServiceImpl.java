@@ -31,9 +31,6 @@ public class IndexServiceImpl implements IndexService {
             status = HttpStatus.BAD_REQUEST;
         }
 
-//        AdminPermissionStatus status =
-//        result == 1 ? AdminPermissionStatus.PERMISSION_CREATED : AdminPermissionStatus.INTERNAL_SERVER_ERROR;
-
         return BaseResponse.BaseCodeBuilder()
                 .status(status)
                 .result(param)
