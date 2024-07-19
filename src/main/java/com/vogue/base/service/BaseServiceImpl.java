@@ -1,11 +1,7 @@
 package com.vogue.base.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.vogue.base.domain.BaseCode;
-import com.vogue.base.domain.CategoryVO;
 import com.vogue.base.mapper.BaseMapper;
 import com.vogue.common.BaseResponse;
-import com.vogue.common.CmmnResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -13,12 +9,10 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.util.MapUtils;
 
 import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -35,7 +29,6 @@ public class BaseServiceImpl implements BaseService {
    * @params param
    * @return BaseResponse
    * */
-
   @Override
   public BaseResponse getSystemMenu(HashMap<String, Object> param) throws Exception {
     List<HashMap<String, Object>> categoryAll = baseMapper.getAsideMenu(param);
@@ -61,11 +54,9 @@ public class BaseServiceImpl implements BaseService {
   /**
    * 상위 카테고리 추가
    * @params  HashMap, List
-   * @return  void
    * */
   public void setUpperMenuList(HashMap<String, Object> menuMap, List<HashMap<String, Object>> categoryAll) throws ParseException {
     JSONArray category = new JSONArray();
-    HashMap<String, Object> menu = new HashMap<>();
 
     // depth가 1인 카테고리 목록 셋팅 ( parent )
     for (HashMap<String, Object> map: categoryAll) {
@@ -98,48 +89,44 @@ public class BaseServiceImpl implements BaseService {
   /**
    * 상위 카테고리의 SEQ와 일치하는 하위 카테고리를 찾아 상위카테고리에 추가
    * @params  HashMap, JSONObject, JSONArray
-   * @return  void
    * */
   public void setLowerMenuList(HashMap<String, Object> menuMap, JSONObject obj, JSONArray lowerPermissionArr) throws ParseException {
-
-    log.info("ARR  : "  + lowerPermissionArr.toString());
-    for(int i=0; i<lowerPermissionArr.size(); i++) {
+    for (Object lowerPermission : lowerPermissionArr) {
       // lowerPermissionArr를 순회하는 객체
-      JSONObject jsonObj = (JSONObject) lowerPermissionArr.get(i);
+      JSONObject jsonObj = (JSONObject) lowerPermission;
       // 데이터를 셋팅하여 저장할 새 객체
       JSONObject newObj = new JSONObject();
       // 상위 카테고리의 SEQ와 하위 카테고리의 UPPER SEQ가 동일한지 비교
       boolean isSame = obj.get("seq").toString().equals(jsonObj.get("upperSeq").toString());
-        if(isSame) {
-          newObj.put("name", jsonObj.get("name"));
-          newObj.put("seq", jsonObj.get("seq"));
-          newObj.put("upperSeq", jsonObj.get("upperSeq"));
-          newObj.put("depth", jsonObj.get("depth"));
-          newObj.put("postYn", jsonObj.get("postYn"));
-          newObj.put("url", jsonObj.get("url"));
+      if (isSame) {
+        newObj.put("name", jsonObj.get("name"));
+        newObj.put("seq", jsonObj.get("seq"));
+        newObj.put("upperSeq", jsonObj.get("upperSeq"));
+        newObj.put("depth", jsonObj.get("depth"));
+        newObj.put("postYn", jsonObj.get("postYn"));
+        newObj.put("url", jsonObj.get("url"));
 
-          JSONParser jsonParser = new JSONParser();
-          Object permission = jsonParser.parse(String.valueOf(jsonObj.get("permission")));
-          JSONArray permissionArr = (JSONArray) permission;
-          newObj.put("permission", permissionArr);
+        JSONParser jsonParser = new JSONParser();
+        Object permission = jsonParser.parse(String.valueOf(jsonObj.get("permission")));
+        JSONArray permissionArr = (JSONArray) permission;
+        newObj.put("permission", permissionArr);
 
-          JSONArray midCategory = (JSONArray) obj.get("midCategory");
-          try {
-            // 하위 카테고리에 등록된 공지사항과 템플릿이 있다면 저장
-            setLowerTemplate(newObj);
-          } catch (Exception e) {
-            throw new RuntimeException(e);
-          }
-          midCategory.add(newObj);
-          // menuMap에 하위 카테고리 저장
-          setMenuMapDiv(menuMap, newObj, "children");
+        JSONArray midCategory = (JSONArray) obj.get("midCategory");
+        try {
+          // 하위 카테고리에 등록된 공지사항과 템플릿이 있다면 저장
+          setLowerTemplate(newObj);
+        } catch (Exception e) {
+          throw new RuntimeException(e);
         }
+        midCategory.add(newObj);
+        // menuMap에 하위 카테고리 저장
+        setMenuMapDiv(menuMap, newObj, "children");
+      }
     }
   }
   /**
   * 하위 카테고리에 등록된 공지사항과 템플릿이 있다면 저장
   * @params  JSONObject
-  * @return  void
   * */
   public void setLowerTemplate(JSONObject obj) throws Exception {
     HashMap<String, String> template = baseMapper.getTemplateBySeq(obj);
@@ -156,7 +143,6 @@ public class BaseServiceImpl implements BaseService {
   /**
    * menuMap에 div에 맞는 데이터 셋팅
    * @params  HashMap, JSONObject, String
-   * @return  void
    * */
   public void setMenuMapDiv(HashMap<String, Object> menuMap, JSONObject obj, String div) {
     JSONObject newObj = new JSONObject();

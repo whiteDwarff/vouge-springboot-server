@@ -1,16 +1,8 @@
 package com.vogue;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@MapperScan("com.vogue.user.mapper")
-@MapperScan("com.vogue.base.mapper")
-@MapperScan("com.vogue.admin.category.mapper")
-@MapperScan("com.vogue.admin.posts.mapper")
-@MapperScan("com.vogue.admin.index.mapper")
-@MapperScan("com.vogue.admin.schedule.mapper")
-@MapperScan("com.vogue.posts.mapper")
 @SpringBootApplication
 public class VogueApplication {
 

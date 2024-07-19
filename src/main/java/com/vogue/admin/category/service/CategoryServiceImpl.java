@@ -1,8 +1,8 @@
 package com.vogue.admin.category.service;
 
-
 import com.vogue.admin.category.domain.CategoryPermissionVO;
 import com.vogue.admin.category.mapper.CategoryMapper;
+import com.vogue.admin.category.service.CategoryService;
 import com.vogue.base.domain.CategoryVO;
 import com.vogue.common.BaseResponse;
 import lombok.extern.slf4j.Slf4j;

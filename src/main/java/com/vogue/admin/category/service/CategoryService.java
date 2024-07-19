@@ -2,7 +2,6 @@ package com.vogue.admin.category.service;
 
 import com.vogue.base.domain.CategoryVO;
 import com.vogue.common.BaseResponse;
-import com.vogue.common.CmmnResponse;
 
 import java.util.HashMap;
 

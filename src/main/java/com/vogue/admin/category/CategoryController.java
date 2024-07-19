@@ -1,19 +1,12 @@
 package com.vogue.admin.category;
 
-
-import com.vogue.admin.category.domain.CategoryPermissionVO;
 import com.vogue.admin.category.service.CategoryService;
 import com.vogue.base.domain.CategoryVO;
-import com.vogue.code.CategoryStatus;
 import com.vogue.common.BaseResponse;
-import com.vogue.common.CmmnResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 
 @Slf4j
 @RequestMapping("api/admin/category/*")

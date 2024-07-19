@@ -33,27 +33,55 @@
 
     <select id="selectByPaging" parameterType="hashmap" resultType="hashmap">
         /* 게시글 목록 조회, PostMapper_SQL.selectByPaging */
-        SELECT
-            P.SEQ
-            , P.TITLE
-            , TO_CHAR(P.CREATEDAT, 'YYYY-MM-DD') 		  AS "createdAt"
-            , P.READCOUNT                                 AS "readCount"
-            , P.LIKECOUNT                                 AS "likeCount"
-            , TU.NAME
-            , P.LOWERSEQ
-            , ROW_NUMBER() OVER(ORDER BY P.CREATEDAT ASC) AS "rowNum"
-        FROM POSTS P
-        JOIN TB_USER TU
-            ON P.AUTHOR = TU.SEQ
-        WHERE P.LOWERSEQ =  CAST (#{category} AS INTEGER)
-        ORDER BY P.CREATEDAT DESC
+        SELECT * FROM (
+            SELECT
+                  P.SEQ
+                , P.TITLE
+                , TO_CHAR(P.CREATEDAT, 'YYYY-MM-DD') 		  AS "createdAt"
+                , P.READCOUNT                                 AS "readCount"
+                , P.LIKECOUNT                                 AS "likeCount"
+                , TU.NAME
+                , P.LOWERSEQ
+                , P.CREATEDAT
+                , ROW_NUMBER() OVER(ORDER BY CREATEDAT ASC) AS "rowNum"
+            FROM POSTS P
+            JOIN TB_USER TU
+                ON P.AUTHOR = TU.SEQ
+        ) A
+        <include refid="selectByPagingWhere"></include>
+        ORDER BY CREATEDAT DESC
         LIMIT #{maxPages} OFFSET #{offset}
     </select>
 
+    <sql id="selectByPagingWhere">
+        <where>
+                AND LOWERSEQ =  CAST (#{category} AS INTEGER)
+            <!-- 작성자, 제목으로 검색-->
+            <if test="label == 'name' and value != '' or label == 'title' and value != ''">
+                AND ${label} LIKE '%' || #{value} || '%'
+            </if>
+            <if test="label == 'readDesc'"></if>
+        </where>
+    </sql>
+
     <select id="selectByPagingCount" parameterType="hashmap" resultType="int">
         /* 게시글 목록 개수 조회, PostMapper_SQL.selectByPagingCount */
-        SELECT COUNT(*) FROM POSTS P
-        WHERE P.LOWERSEQ =    CAST (#{category} AS INTEGER)
+        SELECT COUNT(*) FROM (
+            SELECT
+                  P.SEQ
+                , P.TITLE
+                , TO_CHAR(P.CREATEDAT, 'YYYY-MM-DD') 		  AS "createdAt"
+                , P.READCOUNT                                 AS "readCount"
+                , P.LIKECOUNT                                 AS "likeCount"
+                , TU.NAME
+                , P.LOWERSEQ
+                , P.CREATEDAT
+                , ROW_NUMBER() OVER(ORDER BY CREATEDAT ASC) AS "rowNum"
+            FROM POSTS P
+        JOIN TB_USER TU
+            ON P.AUTHOR = TU.SEQ
+        ) A
+        <include refid="selectByPagingWhere"></include>
     </select>
 
     <select id="selectOne" parameterType="hashmap" resultType="hashmap">
