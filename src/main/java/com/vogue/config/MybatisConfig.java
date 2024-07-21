@@ -27,11 +27,4 @@ public class MybatisConfig {
 
     return sqlSessionFactoryBean.getObject();
   }
-
-  /*
-  @Bean(name="sqlSessionTemplate")
-  public SqlSessionTemplate sqlSessionTemplate(@Qualifier("sqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
-    return new SqlSessionTemplate(sqlSessionFactory);
-  }
-   */
 }

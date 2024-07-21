@@ -45,7 +45,7 @@ public class BasePagination {
     return map;
   }
 
-  public HashMap<String, Object> setPagination(int count, int currentPage) {
+  public HashMap<String, Object> setPagination(int count, int currentPage, HashMap<String, Object> param) {
 
     if(count > 0) {
       this.min = 1;
@@ -57,8 +57,10 @@ public class BasePagination {
       this.min = 1;
       this.max = 1;
       this.current = 1;
-      this.offset = count;
+      this.offset = 0;
     }
+    param.put("offset", this.offset);
+
     return this.getPagination();
   }
 }

@@ -76,9 +76,8 @@ public class NoticeServiceImpl implements NoticeService {
     // 페이지 정보
     BasePagination page = new BasePagination();
 
-    map.put("page", page.setPagination(count, (int) param.get("current")));
+    map.put("page", page.setPagination(count, (int) param.get("current"), param));
 
-    param.put("offset", page.getOffset());
     // 게시판 템플릿 리스트
     List<HashMap<String, Object>> noticeList = noticeMapper.selectNoticeList(param);
     map.put("notice", noticeList);

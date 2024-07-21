@@ -43,7 +43,6 @@ public class PostsServiceImpl implements PostsService{
       status = HttpStatus.BAD_REQUEST;
     }
 
-
     return BaseResponse.BaseCodeBuilder()
               .status(status)
               .result(param)
@@ -78,7 +77,7 @@ public class PostsServiceImpl implements PostsService{
         int count = postsMapper.selectByPagingCount(param);
         BasePagination page = new BasePagination();
 
-        param.put("page", page.setPagination(count, (int) param.get("current")));
+        param.put("page", page.setPagination(count, (int) param.get("current"), param));
         param.put("list", postsMapper.selectByPaging(param));
       }
     } catch (Exception e) {
