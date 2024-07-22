@@ -5,6 +5,7 @@ import com.vogue.code.AdminPostsStatus;
 import com.vogue.common.BasePagination;
 import com.vogue.common.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,9 @@ public class NoticeServiceImpl implements NoticeService {
   public NoticeServiceImpl(NoticeMapper noticeMapper) {
     this.noticeMapper = noticeMapper;
   }
+
+  @Value("${page.list.max-page.10}")
+  private int maxPages;
 
   /**
    * 템플릿, 말머리 등록 및 수정
@@ -74,9 +78,8 @@ public class NoticeServiceImpl implements NoticeService {
     HashMap<String, Object> map = new HashMap<>();
 
     // 페이지 정보
-    BasePagination page = new BasePagination();
-
-    map.put("page", page.setPagination(count, (int) param.get("current"), param));
+    param.put("maxPages", maxPages);
+    map.put("page",new BasePagination().setPagination(count, (int) param.get("current"), param));
 
     // 게시판 템플릿 리스트
     List<HashMap<String, Object>> noticeList = noticeMapper.selectNoticeList(param);

@@ -112,4 +112,27 @@
             AND CAST(P.LOWERSEQ AS VARCHAR)        = #{category}
     </select>
 
+    <select id="selectEditInfo" parameterType="hashmap" resultType="hashmap">
+        /* 게시글 수정 > 게시글 상세 검색 , PostMapper_SQL.selectEditInfo */
+        SELECT
+            SEQ
+            , UPPERSEQ 	                 AS "upperSeq"
+            , LOWERSEQ                   AS "lowerSeq"
+            , PREPEND
+            , TITLE
+            , CONTENT
+            , CAST(PUBLICYN AS BOOLEAN)  AS "publicYn"
+            , CAST(COMMENTYN AS BOOLEAN) AS "commentYn"
+            FROM POSTS
+       <!-- WHERE SEQ = #{seq}-->
+        WHERE SEQ = CAST (#{seq} AS INTEGER)
+    </select>
+
+    <delete id="delete">
+        /* 게시글 삭제 , PostMapper_SQL.delete */
+        DELETE FROM POSTS
+        WHERE SEQ = #{postSeq};
+        <!--  댓글, 좋아요 삭제 구현 -->
+    </delete>
+
 </mapper>

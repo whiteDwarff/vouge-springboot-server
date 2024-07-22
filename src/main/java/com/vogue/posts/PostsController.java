@@ -14,6 +14,7 @@ import java.util.List;
 @RequestMapping("api/posts/*")
 @RestController
 public class PostsController {
+
   private final PostsService postsService;
 
   private final BaseFileUtil baseFileUtil;
@@ -48,6 +49,18 @@ public class PostsController {
     return postsService.selectOne(param);
   }
   /**
+   * 게시글 수정 > 게시글 상세 조회
+   * @params HashMap
+   * @return BaseResponse
+   * */
+  @PostMapping("edit")
+  public BaseResponse selectEditInfo(@RequestBody HashMap<String, Object> param) throws Exception {
+
+    log.info("POST : /api/posts/edit" + param.toString());
+
+    return postsService.selectEditInfo(param);
+  }
+  /**
    * 게시글 목록 조회
    * @params HashMap
    * @return BaseResponse
@@ -69,6 +82,17 @@ public class PostsController {
     log.info("POST : /posts/images");
 
     return baseFileUtil.fileUploadUtil(images, "/posts");
+  }
+ /**
+   * 게시글 삭제
+   * @params HashMap
+   * @return BaseResponse
+   */
+  @PostMapping("/delete")
+  public BaseResponse delete(@RequestBody HashMap<String, Object> param) throws Exception {
+    log.info("POST : /posts/delete : " + param.toString());
+
+    return postsService.delete(param);
   }
 
 }

@@ -30,4 +30,15 @@ public interface PostsMapper {
    * @return int
    * */
   int selectByPagingCount(HashMap<String, Object> param) throws Exception;
+  /**
+   * 게시글 삭제
+   * @params HashMap
+   * */
+  void delete(HashMap<String, Object> param) throws Exception;
+  /**
+   * 게시글 수정 > 게시글 상세 조회
+   * @params HashMap
+   * @return HashMap
+   * */
+  HashMap<String, Object> selectEditInfo(HashMap<String, Object> param) throws Exception;
 }
