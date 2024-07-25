@@ -135,4 +135,18 @@
         <!--  댓글, 좋아요 삭제 구현 -->
     </delete>
 
+    <update id="update" parameterType="hashmap">
+        /* 게시글 수정, PostMapper_SQL.update */
+        UPDATE POSTS SET
+              UPPERSEQ  = #{upperSeq}
+            , LOWERSEQ  = #{lowerSeq}
+            , PREPEND   = #{prepend}
+            , TITLE     = #{title}
+            , CONTENT   = #{content}
+            , PUBLICYN  = #{publicYn}
+            , COMMENTYN = #{commentYn}
+            , UPDATEDAT = CURRENT_TIMESTAMP
+        WHERE SEQ       = CAST (#{seq} AS INTEGER)
+    </update>
+
 </mapper>

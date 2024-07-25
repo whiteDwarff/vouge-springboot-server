@@ -41,4 +41,9 @@ public interface PostsMapper {
    * @return HashMap
    * */
   HashMap<String, Object> selectEditInfo(HashMap<String, Object> param) throws Exception;
+  /**
+   * 게시글 수정
+   * @params HashMap
+   * */
+  void update(HashMap<String, Object> param) throws Exception;
 }

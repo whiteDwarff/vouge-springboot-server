@@ -26,21 +26,22 @@ public class PostsServiceImpl implements PostsService{
   private int maxPages;
 
   /**
+   * 게시글 등록 및 수정
    * @params HashMap
    * @return BaseResponse
    * */
   @Override
   public BaseResponse save(HashMap<String, Object> param) throws Exception {
 
-    String seq = (String) param.get("seq");
     HttpStatus status = HttpStatus.OK;
 
     try {
       // 게시글 등록
-      if(Objects.nonNull(seq)) {
+      if(param.get("seq").toString().isEmpty()) {
         postsMapper.insertPosts(param);
+      // 게시글 수정
       } else {
-
+        postsMapper.update(param);
       }
     } catch (Exception e) {
       e.printStackTrace();
