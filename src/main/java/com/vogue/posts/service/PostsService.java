@@ -31,6 +31,13 @@ public interface PostsService {
   /**
    * 게시글 삭제
    * @params HashMap
+   * @return BaseResponse
    * */
   BaseResponse delete(HashMap<String, Object> param) throws Exception;
+  /**
+   * 게시글 좋아요 등록 및 삭제
+   * @params HashMap
+   * @return BaseResponse
+   * */
+  BaseResponse toggleLiked(HashMap<String, Object> param) throws Exception;
 }

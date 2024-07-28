@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vogue.posts.mapper.LikedMapper">
+
+    <insert id="insert" parameterType="hashmap">
+        /* 좋아요 등록, LikedMapper_SQL.insert*/
+        <selectKey resultType="int" keyProperty="seq" order="BEFORE">
+            SELECT COALESCE(MAX(SEQ), 0) + 1 seq FROM LIKED
+        </selectKey>
+
+        INSERT INTO LIKED(
+            SEQ
+          , POST_SEQ
+          , USER_SEQ
+        ) VALUES(
+            #{seq}
+          , #{postSeq, jdbcType=INTEGER}
+          , #{userSeq}
+        )
+    </insert>
+
+    <select id="selectOne" parameterType="hashmap" resultType="int">
+       /* 게시글 좋아요 여부 확인, LikedMapper_SQL.selectOne*/
+        SELECT COUNT(*) FROM LIKED
+        WHERE   POST_SEQ = #{postSeq, jdbcType=INTEGER}
+            AND USER_SEQ = #{userSeq}
+    </select>
+
+    <delete id="delete">
+        /* 게시글 좋아요 삭제 , LikedMapper_SQL.delete */
+        DELETE FROM LIKED
+        WHERE   POST_SEQ = #{postSeq, jdbcType=INTEGER}
+        AND USER_SEQ     = #{userSeq}
+    </delete>
+
+</mapper>

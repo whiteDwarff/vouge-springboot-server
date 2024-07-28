@@ -3,6 +3,7 @@ package com.vogue.posts.service;
 
 import com.vogue.common.BasePagination;
 import com.vogue.common.BaseResponse;
+import com.vogue.posts.mapper.LikedMapper;
 import com.vogue.posts.mapper.PostsMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,12 +15,15 @@ import java.util.Objects;
 
 @Slf4j
 @Service
-public class PostsServiceImpl implements PostsService{
+public class PostsServiceImpl implements PostsService {
 
   private final PostsMapper postsMapper;
 
-  public PostsServiceImpl(PostsMapper postsMapper) {
+  private final LikedMapper likedMapper;
+
+  public PostsServiceImpl(PostsMapper postsMapper, LikedMapper likedMapper) {
     this.postsMapper = postsMapper;
+    this.likedMapper = likedMapper;
   }
 
   @Value("${page.list.max-page.10}")
@@ -27,9 +31,10 @@ public class PostsServiceImpl implements PostsService{
 
   /**
    * 게시글 등록 및 수정
-   * @params HashMap
+   *
    * @return BaseResponse
-   * */
+   * @params HashMap
+   */
   @Override
   public BaseResponse save(HashMap<String, Object> param) throws Exception {
 
@@ -37,9 +42,9 @@ public class PostsServiceImpl implements PostsService{
 
     try {
       // 게시글 등록
-      if(param.get("seq").toString().isEmpty()) {
+      if (param.get("seq").toString().isEmpty()) {
         postsMapper.insertPosts(param);
-      // 게시글 수정
+        // 게시글 수정
       } else {
         postsMapper.update(param);
       }
@@ -49,15 +54,17 @@ public class PostsServiceImpl implements PostsService{
     }
 
     return BaseResponse.BaseCodeBuilder()
-              .status(status)
-              .result(param)
-              .build();
+            .status(status)
+            .result(param)
+            .build();
   }
+
   /**
    * 게시글 상세 조회
-   * @params HashMap
+   *
    * @return BaseResponse
-   * */
+   * @params HashMap
+   */
   @Override
   public BaseResponse selectOne(HashMap<String, Object> param) throws Exception {
 
@@ -69,11 +76,13 @@ public class PostsServiceImpl implements PostsService{
             .result(result)
             .build();
   }
+
   /**
    * 게시글 수정 > 게시글 상세 조회
-   * @params HashMap
+   *
    * @return BaseResponse
-   * */
+   * @params HashMap
+   */
   @Override
   public BaseResponse selectEditInfo(HashMap<String, Object> param) throws Exception {
 
@@ -85,16 +94,18 @@ public class PostsServiceImpl implements PostsService{
             .result(result)
             .build();
   }
+
   /**
    * 게시글 목록 조회
-   * @params HashMap
+   *
    * @return BaseResponse
-   * */
+   * @params HashMap
+   */
   @Override
   public BaseResponse selectByPaging(HashMap<String, Object> param) throws Exception {
 
     try {
-      if(Objects.nonNull(param.get("category"))) {
+      if (Objects.nonNull(param.get("category"))) {
         int count = postsMapper.selectByPagingCount(param);
 
         param.put("maxPages", maxPages);
@@ -109,21 +120,49 @@ public class PostsServiceImpl implements PostsService{
             .result(param)
             .build();
   }
+
   /**
    * 게시글 삭제
+   *
    * @params HashMap
-   * */
+   */
   public BaseResponse delete(HashMap<String, Object> param) throws Exception {
 
     HttpStatus status = HttpStatus.OK;
 
-    if(param.get("postSeq") != null) {
+    if (param.get("postSeq") != null) {
       postsMapper.delete(param);
     } else {
       status = HttpStatus.BAD_REQUEST;
     }
     return BaseResponse.BaseCodeBuilder()
             .status(status)
+            .build();
+  }
+
+  public BaseResponse toggleLiked(HashMap<String, Object> param) throws Exception {
+
+    HttpStatus status = HttpStatus.OK;
+
+    int count = likedMapper.selectOne(param);
+    HashMap<String, Object> map = new HashMap<>();
+
+    try {
+      if(count == 0) {
+        likedMapper.insert(param);
+        map.put("result", true);
+      } else {
+        likedMapper.delete(param);
+        map.put("result", false);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      status = HttpStatus.BAD_REQUEST;
+    }
+
+    return BaseResponse.BaseCodeBuilder()
+            .status(status)
+            .result(map)
             .build();
   }
 }

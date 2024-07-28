@@ -4,6 +4,8 @@ import com.vogue.common.BaseFileUtil;
 import com.vogue.common.BaseResponse;
 import com.vogue.posts.service.PostsService;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +20,8 @@ public class PostsController {
   private final PostsService postsService;
 
   private final BaseFileUtil baseFileUtil;
+
+  private final Logger logger = LoggerFactory.getLogger(PostsController.class);
 
   public PostsController(PostsService postsService, BaseFileUtil baseFileUtil) {
     this.postsService = postsService;
@@ -94,5 +98,15 @@ public class PostsController {
 
     return postsService.delete(param);
   }
+  /**
+   * 게시글 좋아요 등록 및 삭제
+   * @params HashMap
+   * @return BaseResponse
+   * */
+  @PostMapping("/toggleLiked")
+  public BaseResponse toggleLiked(@RequestBody HashMap<String, Object> param) throws Exception {
+    log.info("POST : /posts/toggleLiked : " + param.toString());
 
+    return postsService.toggleLiked(param);
+  }
 }

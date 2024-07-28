@@ -33,17 +33,19 @@
 
     <select id="selectByPaging" parameterType="hashmap" resultType="hashmap">
         /* 게시글 목록 조회, PostMapper_SQL.selectByPaging */
-        SELECT * FROM (
+        SELECT    A.*
+                , ROW_NUMBER() OVER(ORDER BY CREATEDAT ASC)   AS "rowNum"
+        FROM (
             SELECT
                   P.SEQ
                 , P.TITLE
                 , TO_CHAR(P.CREATEDAT, 'YYYY-MM-DD') 		  AS "createdAt"
                 , P.READCOUNT                                 AS "readCount"
-                , P.LIKECOUNT                                 AS "likeCount"
+                , ( SELECT COUNT(*)
+                    FROM LIKED WHERE POST_SEQ = P.SEQ )		  AS "likeCount"
                 , TU.NAME
                 , P.LOWERSEQ
                 , P.CREATEDAT
-                , ROW_NUMBER() OVER(ORDER BY CREATEDAT ASC) AS "rowNum"
             FROM POSTS P
             JOIN TB_USER TU
                 ON P.AUTHOR = TU.SEQ
@@ -99,17 +101,29 @@
              , BP.IDNTF_NM                         AS  "idntfNm"
              , TU.PHOTO_URL
              , P.READCOUNT                         AS  "readCount"
-             , P.LIKECOUNT                         AS  "likeCount"
+             , ( SELECT COUNT(*) FROM LIKED
+                 WHERE POST_SEQ                    =   #{postSeq}
+                )                                  AS  "likeCount"
+            <if test="userSeq != null and userSeq != ''">
+             , ( SELECT
+                    CASE WHEN COUNT(*) = 0 THEN false
+                        ELSE true
+                    END
+                FROM LIKED
+                WHERE POST_SEQ                     = #{postSeq}
+                  AND USER_SEQ                     = #{userSeq}
+               )                                   AS "isLiked"
+            </if>
              , TO_CHAR(P.CREATEDAT, 'YYYY-MM-DD')  AS  "createdAt"
         FROM POSTS P
         JOIN TB_USER TU
-            ON P.AUTHOR  = TU.SEQ
+            ON P.AUTHOR                            = TU.SEQ
         JOIN BASE_PERMISSION BP
-            ON TU.IDNTF_CD = BP.IDNTF_CD
+            ON TU.IDNTF_CD                         = BP.IDNTF_CD
         JOIN BASE_CATEGORY BC
-            ON P.LOWERSEQ = BC.SEQ
-            WHERE CAST(P.SEQ AS VARCHAR)           = #{posts}
-            AND CAST(P.LOWERSEQ AS VARCHAR)        = #{category}
+            ON P.LOWERSEQ                          = BC.SEQ
+        WHERE   P.SEQ                              = #{postSeq}
+            AND P.LOWERSEQ                         = #{categorySeq}
     </select>
 
     <select id="selectEditInfo" parameterType="hashmap" resultType="hashmap">
