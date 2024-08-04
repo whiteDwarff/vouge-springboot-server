@@ -26,7 +26,7 @@
             AND USER_SEQ = #{userSeq}
     </select>
 
-    <delete id="delete">
+    <delete id="delete" parameterType="hashmap">
         /* 게시글 좋아요 삭제 , LikedMapper_SQL.delete */
         DELETE FROM LIKED
         WHERE   POST_SEQ = #{postSeq, jdbcType=INTEGER}

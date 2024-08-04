@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vogue.posts.mapper.CommentMapper">
+
+    <insert id="insert" parameterType="hashmap">
+        /* 댓글 등록, CommentMapper_SQL.insert*/
+        INSERT INTO COMMENT(
+              SEQ
+            , POST_SEQ
+            , USER_SEQ
+            , COMMENT
+        ) VALUES(
+              ( SELECT COALESCE(MAX(seq), 0) + 1
+                FROM COMMENT )
+            , #{postSeq, jdbcType=INTEGER}
+            , #{userSeq}
+            , #{comment}
+        )
+    </insert>
+
+    <delete id="delete" parameterType="hashmap">
+        /* 댓글 삭제, CommentMapper_SQL.delete*/
+        DELETE FROM COMMENT
+        WHERE POST_SEQ = #{postSeq}
+    </delete>
+
+</mapper>

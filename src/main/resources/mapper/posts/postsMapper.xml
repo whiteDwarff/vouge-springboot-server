@@ -42,16 +42,17 @@
                 , TO_CHAR(P.CREATEDAT, 'YYYY-MM-DD') 		  AS "createdAt"
                 , P.READCOUNT                                 AS "readCount"
                 , ( SELECT COUNT(*)
-                    FROM LIKED WHERE POST_SEQ = P.SEQ )		  AS "likeCount"
+                    FROM LIKED WHERE POST_SEQ   = P.SEQ )	  AS "likeCount"
+                , ( SELECT COUNT(*)
+                    FROM COMMENT WHERE POST_SEQ = P.SEQ)      AS "commentCount"
                 , TU.NAME
                 , P.LOWERSEQ
                 , P.CREATEDAT
             FROM POSTS P
             JOIN TB_USER TU
-                ON P.AUTHOR = TU.SEQ
+                ON P.AUTHOR                     = TU.SEQ
         ) A
         <include refid="selectByPagingWhere"></include>
-        ORDER BY CREATEDAT DESC
         LIMIT #{maxPages} OFFSET #{offset}
     </select>
 
@@ -61,14 +62,20 @@
             <!-- 작성자, 제목으로 검색-->
             <if test="label == 'name' and value != '' or label == 'title' and value != ''">
                 AND ${label} LIKE '%' || #{value} || '%'
+                ORDER BY CREATEDAT DESC
             </if>
-            <if test="label == 'readDesc'"></if>
+          <!--  <if test="label == 'likeDesc'">
+                ORDER BY likeCount DESC, CREATEDAT DESC
+            </if>
+            <if test="label == 'likeAsc'">
+                ORDER BY likeCount ASC, CREATEDAT DESC
+            </if>-->
         </where>
     </sql>
 
     <select id="selectByPagingCount" parameterType="hashmap" resultType="int">
         /* 게시글 목록 개수 조회, PostMapper_SQL.selectByPagingCount */
-        SELECT COUNT(*) FROM (
+        SELECT COUNT(A.*) FROM (
             SELECT
                   P.SEQ
                 , P.TITLE
@@ -80,10 +87,10 @@
                 , P.CREATEDAT
                 , ROW_NUMBER() OVER(ORDER BY CREATEDAT ASC) AS "rowNum"
             FROM POSTS P
-        JOIN TB_USER TU
-            ON P.AUTHOR = TU.SEQ
+            JOIN TB_USER TU
+                ON P.AUTHOR = TU.SEQ
+            <include refid="selectByPagingWhere"></include>
         ) A
-        <include refid="selectByPagingWhere"></include>
     </select>
 
     <select id="selectOne" parameterType="hashmap" resultType="hashmap">
@@ -104,6 +111,9 @@
              , ( SELECT COUNT(*) FROM LIKED
                  WHERE POST_SEQ                    =   #{postSeq}
                 )                                  AS  "likeCount"
+             , ( SELECT COUNT(*) FROM COMMENT
+                 WHERE POST_SEQ                    =   #{postSeq}
+                )                                  AS "commentCount"
             <if test="userSeq != null and userSeq != ''">
              , ( SELECT
                     CASE WHEN COUNT(*) = 0 THEN false
@@ -114,6 +124,7 @@
                   AND USER_SEQ                     = #{userSeq}
                )                                   AS "isLiked"
             </if>
+             , CAST(COMMENTYN AS BOOLEAN)          AS "commentYn"
              , TO_CHAR(P.CREATEDAT, 'YYYY-MM-DD')  AS  "createdAt"
         FROM POSTS P
         JOIN TB_USER TU

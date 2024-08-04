@@ -109,4 +109,15 @@ public class PostsController {
 
     return postsService.toggleLiked(param);
   }
+  /**
+   * 게시글 좋아요 등록 및 삭제
+   * @params HashMap
+   * @return BaseResponse
+   * */
+  @PostMapping("/addComment")
+  public BaseResponse addComment(@RequestBody HashMap<String, Object> param) throws Exception {
+    log.info("POST : /posts/addComment : " + param.toString());
+
+    return postsService.addComment(param);
+  }
 }

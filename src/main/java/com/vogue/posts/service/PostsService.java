@@ -40,4 +40,10 @@ public interface PostsService {
    * @return BaseResponse
    * */
   BaseResponse toggleLiked(HashMap<String, Object> param) throws Exception;
+  /**
+   * 댓글 등록
+   * @params HashMap
+   * @return BaseResponse
+   * */
+  BaseResponse addComment(HashMap<String, Object> param) throws Exception;
 }
